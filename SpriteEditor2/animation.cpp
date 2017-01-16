@@ -27,6 +27,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 //extern Part *parts[e_bone_count];
 
+#ifdef editor
+extern double zoom;
+extern xy origo;
+#endif
 
 void Part::save(FILE *fd)
 {
@@ -97,12 +101,17 @@ void Bone::draw( )
 	{
 		if ((part) && (part -> bitmap))
 		{
+
+#ifdef editor
+			xy p0 = { pos.x() * zoom, pos.y() * zoom } ;
+			p0 += origo;
+#endif
 			al_draw_tinted_scaled_rotated_bitmap_region(
 				part->bitmap, part->start.x(), part->start.y(),
 				part->end.x() - part->start.x(),
 				part->end.y() - part->start.y(),
 				color,
-				part->hotspot.x(), part->hotspot.y(), pos.x(), pos.y(), 1.0f, 1.0f, pos.rad() + part->rad, 0);		
+				part->hotspot.x(), part->hotspot.y(), p0.x(), p0.y(), zoom, zoom, pos.rad() + part->rad, 0);		
 		}
 		else
 		{
@@ -110,6 +119,9 @@ void Bone::draw( )
 			xy length;
 			xy height;
 			xy cross;
+#ifdef editor
+			xy p0;
+#endif
 			xy p1, p2, p3;
 
 			length.rel_x = cos(pos.rad()) * pos.length();
@@ -124,12 +136,27 @@ void Bone::draw( )
 			p2 = pos1 + cross - height;
 			p3 = pos1 + length;
 
-			al_draw_line(pos1.x(), pos1.y(), p1.x(), p1.y(), color, 3);
-			al_draw_line(pos1.x(), pos1.y(), p2.x(), p2.y(), color, 3);
+#ifdef editor
+
+			p0 = { pos1.x() * zoom, pos1.y() * zoom };
+			p1 = { p1.x() * zoom, p1.y() * zoom };
+			p2 = { p2.x() * zoom, p1.y() * zoom };
+			p3 = { p3.x() * zoom, p1.y() * zoom };
+
+
+			al_draw_line(p0.x() , p0.y() , p1.x() , p1.y() , color, 3);
+			al_draw_line(p0.x() , p0.y() , p2.x() , p2.y() , color, 3);
+
+			al_draw_line(p1.x() , p1.y() , p3.x() , p3.y() , color, 3);
+			al_draw_line(p2.x() , p2.y() , p3.x() , p3.y() , color, 3);
+#else
+
+			al_draw_line(pos1.x() , pos1.y(), p1.x(), p1.y(), color, 3);
+			al_draw_line(pos1.x() , pos1.y(), p2.x(), p2.y(), color, 3);
 
 			al_draw_line(p1.x(), p1.y(), p3.x(), p3.y(), color, 3);
 			al_draw_line(p2.x(), p2.y(), p3.x(), p3.y(), color, 3);
-
+#endif
 
 		}
 	}

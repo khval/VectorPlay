@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #define controlls_off
 #define relative
 #define liniar_movement
+#define editor
 
 #ifndef main_h
 #define main_h

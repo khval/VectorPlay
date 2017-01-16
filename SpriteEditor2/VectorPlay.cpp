@@ -41,6 +41,7 @@ bool display_mode = false;
 
 xy display_size(800,600);
 xy mousePos;
+xy origo;
 
 Animation *anim = NULL;
 //Frame *frame_current = NULL;
@@ -52,7 +53,7 @@ ALLEGRO_FONT *font;
 ALLEGRO_BITMAP *sprite_map;
 
 double zoom = 2.0f;
-int speed = 1;
+double speed = 1;
 int delay = 20;
 
 int mouse_picked_corner = 0;
@@ -130,7 +131,9 @@ void zoom_out_button_click(int mousex, int mousey)
 
 void speed_down_button_click(int mousex, int mousey)
 {
-	speed /= 2;
+	speed /= 2.0f;
+
+	if (speed < (1.0f / 4.0f)) speed = 1.0f / 2.0f;
 }
 
 void speed_up_button_click(int mousex, int mousey)
@@ -835,8 +838,9 @@ int main(int argc, char* argv[])
 
 	}
 
-	sprite_map = al_load_bitmap("gfx/show.jpg");
+	sprite_map = al_load_bitmap("gfx/player.png");
 
+	origo = display_size / 2;
 
 	anim = load_xml();
 
@@ -900,7 +904,7 @@ int main(int argc, char* argv[])
 
 			if (event.type == ALLEGRO_EVENT_TIMER)
 			{
-				al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 350, 50, 0, "%d - %0.2lf", delay, (double)delay / 100);
+				al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 350, 50, 0, "%0.2lf - %0.2lf - %0.2lf", origo.x(), origo.y(), zoom);
 
 				if (font)
 				{
@@ -957,7 +961,7 @@ int main(int argc, char* argv[])
 				}
 
 				al_flip_display();
-				al_clear_to_color(al_map_rgba(0, 0, 0, 0));
+				al_clear_to_color(al_map_rgba(100, 100, 100, 255));
 			}
 	
 
@@ -1001,7 +1005,7 @@ int main(int argc, char* argv[])
 
 					if (selected_frame < anim->frameCount)
 					{
-						picked_vector = anim->frames[selected_frame]->get_picked_vector(mstate.x, mstate.y);
+						picked_vector = anim->frames[selected_frame]->get_picked_vector( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
 					}
 					break;
 
@@ -1016,7 +1020,7 @@ int main(int argc, char* argv[])
 			{
 				if (MouseIsDown && picked_vector >-1)
 				{
-					anim -> frames[selected_frame]->bones[picked_vector]->pos.set_relative((double)mstate.x, (double)mstate.y);
+					anim->frames[selected_frame]->bones[picked_vector]->pos.set_relative( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
 				}
 			}
 
