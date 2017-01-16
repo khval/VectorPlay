@@ -17,38 +17,38 @@
 </part>
 <part>
 <name>venstre arm top</name>
-<hotspot><x>0.50</x><y>1.00</y></hotspot>
+<hotspot><x>0.50</x><y>0.80</y></hotspot>
 <start><x>38.00</x><y>24.00</y></start>
-<end><x>46.00</x><y>36.00</y></end>
+<end><x>46.00</x><y>38.00</y></end>
 <degrees>-90.00</degrees>
 </part>
 <part>
 <name>venstre arm bottom</name>
 <hotspot><x>0.50</x><y>1.00</y></hotspot>
-<start><x>38.00</x><y>36.00</y></start>
+<start><x>38.00</x><y>34.00</y></start>
 <end><x>46.00</x><y>46.00</y></end>
 <degrees>-90.00</degrees>
 </part>
 <part>
 <name>høyre arm top</name>
-<hotspot><x>0.50</x><y>1.00</y></hotspot>
+<hotspot><x>0.50</x><y>0.80</y></hotspot>
 <start><x>25.00</x><y>24.00</y></start>
-<end><x>31.00</x><y>36.00</y></end>
+<end><x>31.00</x><y>38.00</y></end>
 <degrees>-90.00</degrees>
 </part>
 <part>
 <name>høyre arm bottom</name>
 <hotspot><x>0.50</x><y>1.00</y></hotspot>
-<start><x>25.00</x><y>36.00</y></start>
+<start><x>25.00</x><y>34.00</y></start>
 <end><x>31.00</x><y>46.00</y></end>
 <degrees>-90.00</degrees>
 </part>
 <part>
 <name>hand</name>
-<hotspot><x>1.00</x><y>0.00</y></hotspot>
+<hotspot><x>0.50</x><y>1.00</y></hotspot>
 <start><x>28.00</x><y>46.00</y></start>
 <end><x>33.00</x><y>50.00</y></end>
-<degrees>0.00</degrees>
+<degrees>-90.00</degrees>
 </part>
 <part>
 <name>venstre leg</name>
@@ -87,42 +87,42 @@
 </part>
 </parts>
 <bones>
-<bone><name>main</name><connectedTo>none</connectedTo><color>0xFFFFFFFF</color><min>0.00</min><max>0.00</max><part>none</part></bone>
-<bone><name>left lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>venstre lår</part></bone>
-<bone><name>right lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>høyre lår</part></bone>
-<bone><name>left leg</name><connectedTo>left lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>venstre leg</part></bone>
-<bone><name>right leg</name><connectedTo>right lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>høyre leg</part></bone>
-<bone><name>left feet</name><connectedTo>left leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
-<bone><name>right feet</name><connectedTo>right leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
-<bone><name>body</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>21.00</min><max>21.00</max><part>body</part></bone>
-<bone><name>neck</name><connectedTo>body</connectedTo><color>0xFF000000</color><min>4.00</min><max>4.00</max><part>none</part></bone>
-<bone><name>head</name><connectedTo>neck</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>head</part></bone>
-<bone><name>left top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>venstre arm top</part></bone>
-<bone><name>right top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>høyre arm top</part></bone>
-<bone><name>left arm</name><connectedTo>left top arm</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>venstre arm bottom</part></bone>
-<bone><name>right arm</name><connectedTo>right top arm</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>høyre arm bottom</part></bone>
-<bone><name>left hand</name><connectedTo>left arm</connectedTo><color>0xFFFFFFFF</color><min>4.00</min><max>4.00</max><part>hand</part></bone>
-<bone><name>right hand</name><connectedTo>right arm</connectedTo><color>0xFFFFFFFF</color><min>4.00</min><max>4.00</max><part>hand</part></bone>
+<bone><sort>-1</sort><name>left lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>venstre lår</part></bone>
+<bone><sort>-1</sort><name>left leg</name><connectedTo>left lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>venstre leg</part></bone>
+<bone><sort>-1</sort><name>left feet</name><connectedTo>left leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
+<bone><sort>-1</sort><name>left top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>venstre arm top</part></bone>
+<bone><sort>-1</sort><name>left arm</name><connectedTo>left top arm</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>venstre arm bottom</part></bone>
+<bone><sort>-1</sort><name>left hand</name><connectedTo>left arm</connectedTo><color>0xFFFFFFFF</color><min>4.00</min><max>4.00</max><part>hand</part></bone>
+<bone><sort>0</sort><name>main</name><connectedTo>none</connectedTo><color>0xFFFFFFFF</color><min>0.00</min><max>0.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>right lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>høyre lår</part></bone>
+<bone><sort>0</sort><name>right leg</name><connectedTo>right lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>høyre leg</part></bone>
+<bone><sort>0</sort><name>right feet</name><connectedTo>right leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
+<bone><sort>0</sort><name>neck</name><connectedTo>body</connectedTo><color>0xFF000000</color><min>4.00</min><max>4.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>head</name><connectedTo>neck</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>head</part></bone>
+<bone><sort>1</sort><name>body</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>21.00</min><max>21.00</max><part>body</part></bone>
+<bone><sort>2</sort><name>right top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>høyre arm top</part></bone>
+<bone><sort>2</sort><name>right arm</name><connectedTo>right top arm</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>høyre arm bottom</part></bone>
+<bone><sort>2</sort><name>right hand</name><connectedTo>right arm</connectedTo><color>0xFFFFFFFF</color><min>4.00</min><max>4.00</max><part>hand</part></bone>
 </bones>
 <frames>
 <frame>
 <bones>
-<bone><x>-10.00</x><y>0.00</y></bone>
-<bone><x>-1.92</x><y>14.88</y></bone>
-<bone><x>4.74</x><y>14.23</y></bone>
-<bone><x>-10.87</x><y>1.66</y></bone>
-<bone><x>2.69</x><y>10.67</y></bone>
-<bone><x>-4.99</x><y>0.26</y></bone>
-<bone><x>-0.28</x><y>4.99</y></bone>
-<bone><x>8.86</x><y>-19.04</y></bone>
-<bone><x>-0.22</x><y>-3.99</y></bone>
-<bone><x>-3.58</x><y>-9.34</y></bone>
-<bone><x>9.89</x><y>-1.45</y></bone>
-<bone><x>6.72</x><y>-7.41</y></bone>
-<bone><x>4.55</x><y>-8.90</y></bone>
-<bone><x>-1.48</x><y>-9.89</y></bone>
-<bone><x>1.18</x><y>-3.82</y></bone>
-<bone><x>-3.66</x><y>1.60</y></bone>
+<bone><x>-10.32</x><y>10.89</y></bone>
+<bone><x>-10.86</x><y>-1.76</y></bone>
+<bone><x>-4.88</x><y>-1.10</y></bone>
+<bone><x>8.56</x><y>5.16</y></bone>
+<bone><x>9.97</x><y>-0.83</y></bone>
+<bone><x>3.84</x><y>-1.10</y></bone>
+<bone><x>6.25</x><y>5.00</y></bone>
+<bone><x>14.83</x><y>-2.23</y></bone>
+<bone><x>-5.18</x><y>9.70</y></bone>
+<bone><x>-2.76</x><y>4.17</y></bone>
+<bone><x>-0.21</x><y>-3.99</y></bone>
+<bone><x>-3.28</x><y>-9.45</y></bone>
+<bone><x>1.67</x><y>-20.93</y></bone>
+<bone><x>-9.82</x><y>-1.90</y></bone>
+<bone><x>-4.28</x><y>9.04</y></bone>
+<bone><x>-0.42</x><y>3.98</y></bone>
 </bones>
 </frame>
 <frame>

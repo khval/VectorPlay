@@ -35,6 +35,7 @@ public:
 	char *value();
 	void set_buffer(char *str);
 	double get_double_value(char *name);
+	int get_int_value(char *name);
 	unsigned int get_hex_value(char *name);
 	char *get_str_value(char *name);
 

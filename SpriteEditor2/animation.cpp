@@ -64,10 +64,33 @@ Part::~Part()
 
 Bone::Bone()
 {
+	sort = 0;
 	part = NULL;
 	name = NULL;
 	connectedTo = NULL;
 	pos.set_angel_vector(0, 10);
+}
+
+void Frame::sortBones()
+{
+	int a;
+	bool needs_sorting = true;
+	Bone *t;
+
+	while (needs_sorting)
+	{
+		needs_sorting = false;
+		for (a = 0; a < boneCount-1; a++)
+		{
+			if (bones[a]->sort>bones[a + 1]->sort)
+			{
+				t = bones[a];
+				bones[a] = bones[a + 1];
+				bones[a + 1] = t;
+				needs_sorting = true;
+			}
+		}
+	}
 }
 
 void Bone::save( FILE *fd )
@@ -79,7 +102,8 @@ void Bone::save( FILE *fd )
 
 	argb = (a << 24) + (r << 16) + (g << 8) + b ;
 
-	fprintf(fd, "<bone><name>%s</name><connectedTo>%s</connectedTo><color>0x%08X</color><min>%0.2lf</min><max>%0.2lf</max><part>%s</part></bone>\n",
+	fprintf(fd, "<bone><sort>%d</sort><name>%s</name><connectedTo>%s</connectedTo><color>0x%08X</color><min>%0.2lf</min><max>%0.2lf</max><part>%s</part></bone>\n",
+		this->sort,
 		this->name ? this->name : "NoName",
 		this->connectedTo ? this->connectedTo : "none",
 		argb,
@@ -140,9 +164,13 @@ void Bone::draw( )
 
 			p0 = { pos1.x() * zoom, pos1.y() * zoom };
 			p1 = { p1.x() * zoom, p1.y() * zoom };
-			p2 = { p2.x() * zoom, p1.y() * zoom };
-			p3 = { p3.x() * zoom, p1.y() * zoom };
+			p2 = { p2.x() * zoom, p2.y() * zoom };
+			p3 = { p3.x() * zoom, p3.y() * zoom };
 
+			p0 += origo;
+			p1 += origo;
+			p2 += origo;
+			p3 += origo;
 
 			al_draw_line(p0.x() , p0.y() , p1.x() , p1.y() , color, 3);
 			al_draw_line(p0.x() , p0.y() , p2.x() , p2.y() , color, 3);

@@ -21,6 +21,7 @@ class Bone
 {
 public:
 	ALLEGRO_COLOR color;
+	int sort;
 	char *name;
 	char *connectedTo;
 	Part *part;
@@ -36,6 +37,8 @@ class Frame
 public:
 	int boneCount;
 	Bone **bones;
+
+	void sortBones();
 #ifndef liniar_movement
 	xy control_points[e_bone_count * 2];
 #endif

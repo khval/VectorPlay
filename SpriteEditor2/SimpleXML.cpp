@@ -138,6 +138,20 @@ void SimpleXML::operator = (SimpleXML &other)
 	}
 }
 
+int SimpleXML::get_int_value(char *name)
+{
+	int ret = 0;
+	SimpleXML *tmp;
+
+	if (tmp = get_object(name, 1))
+	{
+		sscanf(tmp->value(), "%d", &ret);
+		delete tmp;
+	}
+
+	return ret;
+}
+
 double SimpleXML::get_double_value(char *name)
 {
 	double ret = 0.0f;

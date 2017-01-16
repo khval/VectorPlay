@@ -52,7 +52,7 @@ Animation *anim = NULL;
 ALLEGRO_FONT *font;
 ALLEGRO_BITMAP *sprite_map;
 
-double zoom = 2.0f;
+double zoom = 8.0f;
 double speed = 1;
 int delay = 20;
 
@@ -632,6 +632,7 @@ Animation *load_xml()
 	{
 		bones_count = 0;
 		Bone *theBone;
+		int sort;
 
 		rootframe = anim->frames[0];
 
@@ -645,6 +646,7 @@ Animation *load_xml()
 			theBone->connectedTo = bone->get_str_value("connectedTo");
 			theBone->pos.length_min = bone->get_double_value("min");
 			theBone->pos.length_max = bone->get_double_value("max");
+			theBone->sort = bone->get_int_value("sort");
 
 			if (char *partname = bone->get_str_value("part"))
 			{
@@ -721,6 +723,7 @@ void fix_anim()
 	Bone **rootbones;
 	int found = 0;
 
+	anim->frames[0]->sortBones();
 	rootbones = anim->frames[0]->bones;
 
 	for (int selected = 0; selected < anim->frameCount; selected++)
