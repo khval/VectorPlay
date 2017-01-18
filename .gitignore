@@ -1,0 +1,6 @@
+*.opensdf
+*.obj
+SpriteEditor2/Debug/SpriteEditor.log
+*.tlog
+SpriteEditor2/Debug/VectorPlay2.tlog/CL.write.1.tlog
+*.pdb

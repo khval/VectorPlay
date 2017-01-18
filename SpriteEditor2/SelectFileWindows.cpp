@@ -19,7 +19,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include <windows.h>
 
 
-void BasicFileOpen()
+// basicly we get a filename if was success, or else NULL
+// error code can be read, but wont be correct on different OS's for now.
+
+char *BasicFileOpen( int &errorcode )
 {
 	char filename[MAX_PATH];
 
@@ -37,10 +40,16 @@ void BasicFileOpen()
 
 	if (GetOpenFileNameA( &ofn))
 	{
-		std::cout << "You chose the file \"" << filename << "\"\n";
+//		std::cout << "You chose the file \"" << filename << "\"\n";
+		errorcode = 0;
+		return strdup(filename);
 	}
 	else
 	{
+		// we don't care about OS, or what error code is for now, this just quick implmentation.
+		errorcode = CommDlgExtendedError();
+
+		/*
 		// All this stuff below is to tell you exactly how you messed up above. 
 		// Once you've got that fixed, you can often (not always!) reduce it to a 'user cancelled' assumption.
 		switch (CommDlgExtendedError())
@@ -62,6 +71,7 @@ void BasicFileOpen()
 		case FNERR_SUBCLASSFAILURE: std::cout << "FNERR_SUBCLASSFAILURE\n"; break;
 		default: std::cout << "You cancelled.\n";
 		}
+		*/
 	}
-
+	return NULL;
 }
