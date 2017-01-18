@@ -7,8 +7,10 @@
 
 
 #include <stdio.h>
-#include <tchar.h>
 
+#ifndef amigaos4
+#include <tchar.h>
+#endif
 
 
 // TODO: reference additional headers your program requires here

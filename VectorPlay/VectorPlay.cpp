@@ -23,7 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include "buttons.h"
-#include "main.h"
+
+#ifdef amigaos4
+#include "unistd.h"
+#include "main_amigaos4.h"
+#else
+#include "main_windows.h"
+#endif
+
 #include "debug.h"
 #include "animation.h"
 #include "simpleXML.h"
@@ -320,12 +327,8 @@ void curv(xy p0, xy p1, xy p2)
 
 void transform_animation_bone(int n, double p, xy &before, xy &current, xy &after, xy &d)
 {
-	xy delta;
-
-
 #ifdef relative
-	delta = { after.rel_x - current.rel_x, after.rel_y - current.rel_y };
-
+	xy delta( after.rel_x - current.rel_x, after.rel_y - current.rel_y );
 	d = current.get_relative() + (delta * p);
 #endif
 
@@ -813,8 +816,8 @@ int main(int argc, char* argv[])
 	char buffer[1000];
 	bool MouseIsDown = false;
 
-	xy vtest = {1.0f,2.0f};
-	xy vtest2 = { 10.0f, 20.0f };
+//	xy vtest (1.0f,2.0f);
+//	xy vtest2 ( 10.0f, 20.0f );
 
 
 	if (!al_init())	return -1;
@@ -1023,7 +1026,7 @@ int main(int argc, char* argv[])
 			{
 				if (MouseIsDown && picked_vector >-1)
 				{
-					anim->frames[selected_frame]->bones[picked_vector]->pos.set_relative( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
+					anim->frames[selected_frame]->bones[picked_vector]->pos.set_absolute_xy( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
 				}
 			}
 

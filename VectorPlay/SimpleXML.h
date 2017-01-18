@@ -17,7 +17,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 #pragma once
 #include <String>
-#include "main.h"
+
+#ifdef amigaos4
+#include "main_amigaos4.h"
+#endif
+
+#ifdef windows
+#include "main_windows.h"
+#endif
 
 class SimpleXML
 {
@@ -30,7 +37,7 @@ public:
 //	void save(char *filename);
 	SimpleXML *get_object(char *name, int number);
 
-	unsigned int SimpleXML::count(char *name);
+	unsigned int count(char *name);
 
 	char *value();
 	void set_buffer(char *str);

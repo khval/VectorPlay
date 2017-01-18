@@ -15,7 +15,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 
-#include "main.h"
+#ifdef amigaos4
+#include "main_amigaos4.h"
+#else
+#include "main_windows.h"
+#endif
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -45,15 +49,22 @@ xy::xy(double x, double y)
 
 xy xy::get_relative()
 {
-	return{ rel_x, rel_y };
+	xy ret(rel_x, rel_y);
+	return ret;
 }
 
-void xy::set_relative(double x, double y)
+void xy::set_absolute_xy(double x, double y)
 {
 	rel_x = ref ? x - ref->x() : x;
 	rel_y = ref ? y - ref->y() : y;
 
 	limit();
+}
+
+void xy::set_relative_xy(double x, double y)
+{
+	rel_x = x;
+	rel_y = y;
 }
 
 void xy::set_angel_vector(double _rad, double _length)
@@ -92,7 +103,7 @@ double xy::rad()
 
 xy xy::operator+(xy &pos)
 {
-	xy ret = { x() + pos.x(), y() + pos.y() };
+	xy ret ( x() + pos.x(), y() + pos.y() );
 	return ret;
 }
 
@@ -106,14 +117,14 @@ xy xy::operator+=(xy &pos)
 
 xy xy::operator-()
 {
-	xy ret = { -x() , -y() };
+	xy ret( -x() , -y() );
 	return ret;
 }
 
 
 xy xy::operator-(xy &pos)
 {
-	xy ret = { x() - pos.x(), y() - pos.y() };
+	xy ret ( x() - pos.x(), y() - pos.y() );
 	return ret;
 }
 
@@ -127,26 +138,26 @@ xy xy::operator-=(xy &pos)
 
 xy xy::operator/(xy &pos)
 {
-	xy ret = { rel_x / pos.x(), rel_y / pos.y() };
+	xy ret ( rel_x / pos.x(), rel_y / pos.y() );
 	return ret;
 }
 
 xy xy::operator*(xy &pos)
 {
-	xy ret = { rel_x * pos.x(), rel_y * pos.y() };
+	xy ret ( rel_x * pos.x(), rel_y * pos.y() );
 	return ret;
 }
 
 xy xy::operator/(double length)
 {
-	xy ret = { rel_x / length, rel_y / length };
+	xy ret ( rel_x / length, rel_y / length );
 	return ret;
 
 }
 
 xy xy::operator*(double length)
 {
-	xy ret = { rel_x * length, rel_y * length };
+	xy ret ( rel_x * length, rel_y * length );
 	return ret;
 }
 
@@ -236,8 +247,8 @@ void xy::limit()
 
 rect::rect()
 {
-	p0 = { -5, -5 };
-	p1 = { 5, -5 };
-	p2 = { 5, 5 };
-	p3 = { -5, 5 };
+	p0.set_relative_xy( -5, -5 );
+	p1.set_relative_xy( 5, -5 );
+	p2.set_relative_xy( 5, 5 );
+	p3.set_relative_xy( -5, 5 );
 }

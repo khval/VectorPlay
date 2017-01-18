@@ -15,7 +15,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 
-#include "main.h"
+#ifdef amigaos4
+#include "main_amigaos4.h"
+#else
+#include "main_windows.h"
+#endif
 
 double intersect_vector(double a0, double y0, double a1, double y1)
 {

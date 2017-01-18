@@ -1,5 +1,9 @@
 
-#include "main.h"
+#ifdef amigaos4
+#include "main_amigaos4.h"
+#else
+#include "main_windows.h"
+#endif
 
 
 class Part
@@ -64,7 +68,7 @@ class Animation
 	Frame *final;
 
 	void transform_animation(double p, Frame &before, Frame &current, Frame &after);
-	Part *Animation::findPart(char *name);
+	Part *findPart(char *name);
 	Animation(int FrameCount, int PartCount, int BoneCount);
 	~Animation();
 };

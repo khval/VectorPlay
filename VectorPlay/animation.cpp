@@ -25,6 +25,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include "animation.h"
 #include "intersect.h"
 
+#if defined(amigaos4) || defined(linux)
+#include <stdint.h>
+#endif
+
 //extern Part *parts[e_bone_count];
 
 #ifdef editor
@@ -127,7 +131,7 @@ void Bone::draw( )
 		{
 
 #ifdef editor
-			xy p0 = { pos.x() * zoom, pos.y() * zoom } ;
+			xy p0 ( pos.x() * zoom, pos.y() * zoom ) ;
 			p0 += origo;
 #endif
 			al_draw_tinted_scaled_rotated_bitmap_region(
@@ -162,10 +166,10 @@ void Bone::draw( )
 
 #ifdef editor
 
-			p0 = { pos1.x() * zoom, pos1.y() * zoom };
-			p1 = { p1.x() * zoom, p1.y() * zoom };
-			p2 = { p2.x() * zoom, p2.y() * zoom };
-			p3 = { p3.x() * zoom, p3.y() * zoom };
+			p0.set_relative_xy( pos1.x() * zoom, pos1.y() * zoom );
+			p1.set_relative_xy( p1.x() * zoom, p1.y() * zoom );
+			p2.set_relative_xy( p2.x() * zoom, p2.y() * zoom );
+			p3.set_relative_xy( p3.x() * zoom, p3.y() * zoom );
 
 			p0 += origo;
 			p1 += origo;
@@ -208,7 +212,7 @@ int Frame::get_picked_vector(double x, double y)
 	xy picked_abs(1000, 1000);
 	for (n = 0; n < boneCount; n++)
 	{
-		delta = { x, y };
+		delta.set_relative_xy( x, y );
 		delta -= bones[n]->pos;
 		delta.abs();
 
@@ -275,6 +279,8 @@ void Animation::transform_animation(double p, Frame &before, Frame &current, Fra
 	int n = 0;
 	xy tmp;
 	xy delta;
+	xy part;
+	xy partof;
 
 	// calulate speed ?
 
@@ -282,9 +288,11 @@ void Animation::transform_animation(double p, Frame &before, Frame &current, Fra
 	{
 
 #ifdef relative
-		delta = { after.bones[n]->pos.rel_x - current.bones[n]->pos.rel_x, after.bones[n]->pos.rel_y - current.bones[n]->pos.rel_y };
+		delta.set_relative_xy( after.bones[n]->pos.rel_x - current.bones[n]->pos.rel_x, after.bones[n]->pos.rel_y - current.bones[n]->pos.rel_y );
 
-		tmp = current.bones[n]->pos.get_relative() + (delta * p);
+		tmp = current.bones[n]->pos.get_relative();
+		partof = delta * p;
+		tmp +=  partof;
 
 		final->bones[n]->pos.rel_x = tmp.rel_x;
 		final->bones[n]->pos.rel_y = tmp.rel_y;

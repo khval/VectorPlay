@@ -1,3 +1,4 @@
+
 /*
 Copyright 2017 Kjetil Hvalstrand (LiveForIt-Software.net)
 
@@ -14,22 +15,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#include <iostream>
+#include <proto/exec.h>
+#include <proto/dos.h>
 
-#ifndef __amigaos4__
 
-extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char* lpOutputString);
+// basicly we get a filename if was success, or else NULL
+// error code can be read, but wont be correct on different OS's for now.
 
-void DPrintF(char *fmt, ...)
+char *BasicFileOpen( int &errorcode )
 {
-	va_list arglist;
-	char buffer[20000];
-
-	va_start(arglist, fmt);
-	vsprintf(buffer, fmt, arglist);
-	va_end(arglist);
-	OutputDebugStringA((char *)buffer);
+	return NULL;
 }
-#endif

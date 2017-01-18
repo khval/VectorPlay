@@ -19,7 +19,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include <stdio.h>
 #include <string.h>
 #include "SimpleXML.h"
-#include "main.h"
+
+#ifdef amigaos4
+
+#define _FILE_OFFSET_BITS 64
+#define _LARGEFILE64_SOURCE
+#define __LARGE64_FILES
+
+#include "main_amigaos4.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
+#ifdef windows
+#include "main_windows.h"
+#endif
+
 #include "debug.h"
 
 #ifdef windows
@@ -52,10 +69,41 @@ SimpleXML::~SimpleXML()
 	if (buffer) free(buffer);
 }
 
+#if defined(amigaos4) || defined(linux)
 void SimpleXML::load(char *filename)
 {
 	unsigned long long int size;
-	fd = fopen(filename, "r");
+	int fd;
+	struct stat64 stat;
+
+	if (lstat64( filename, &stat ))
+	{
+		size = stat.st_size;
+	}
+
+
+	fd = open(filename, O_RDONLY);
+	if (fd)
+	{
+		if (size > 0)
+		{
+			buffer = (char *)malloc(size + 1);
+			if (buffer)
+			{
+				memset(buffer, 0, size);
+				read(fd, buffer, size );
+			}
+		}
+		close(fd);
+	}
+}
+#endif
+
+#ifdef windows
+void SimpleXML::load(char *filename)
+{
+	unsigned long long int size;
+	FILE *fd = fopen(filename, "r");
 
 	if (fd)
 	{
@@ -75,6 +123,9 @@ void SimpleXML::load(char *filename)
 		fclose(fd);
 	}
 }
+#endif
+
+
 
 SimpleXML *SimpleXML::get_object(char *name, int number)
 {
