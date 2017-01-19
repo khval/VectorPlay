@@ -327,9 +327,11 @@ void curv(xy p0, xy p1, xy p2)
 
 void transform_animation_bone(int n, double p, xy &before, xy &current, xy &after, xy &d)
 {
+	xy partof;
 #ifdef relative
 	xy delta( after.rel_x - current.rel_x, after.rel_y - current.rel_y );
-	d = current.get_relative() + (delta * p);
+	partof = delta * p;
+	d = current.get_relative() + partof;
 #endif
 
 }
@@ -554,7 +556,7 @@ void transform_animation(double p, Animation &a0, Animation &a1, Animation &dest
 
 void printV(xy &pos)
 {
-	DPrintF("%lf,%lf\n", pos.x(), pos.y());
+//	DPrintF("%lf,%lf\n", pos.x(), pos.y());
 }
 
 Animation *load_xml()
@@ -633,12 +635,12 @@ Animation *load_xml()
 
 	if (bonesObj = doc.get_object("bones", 1))
 	{
-		bones_count = 0;
 		Bone *theBone;
 		int sort;
 
-		rootframe = anim->frames[0];
-
+		rootframe = (bones_count > 0) ? anim->frames[0] : NULL;
+		
+		bones_count = 0;
 		while (bone = bonesObj->get_object("bone", bones_count + 1))
 		{
 			theBone = rootframe->bones[bones_count];
@@ -725,6 +727,18 @@ void fix_anim()
 	Frame *frame;
 	Bone **rootbones;
 	int found = 0;
+
+	if (!anim -> frames)
+	{
+		printf("frames is NULL\n");
+		return;
+	}
+
+	if (!anim -> frames[0])
+	{
+		printf("frame 0 has no object\n");
+		return;
+	}
 
 	anim->frames[0]->sortBones();
 	rootbones = anim->frames[0]->bones;
@@ -816,6 +830,10 @@ int main(int argc, char* argv[])
 	char buffer[1000];
 	bool MouseIsDown = false;
 
+#ifdef __amigaos4__
+	amiga_init();
+#endif
+
 //	xy vtest (1.0f,2.0f);
 //	xy vtest2 ( 10.0f, 20.0f );
 
@@ -840,7 +858,11 @@ int main(int argc, char* argv[])
 		al_install_mouse();
 		al_install_keyboard();
 
+#ifndef amigaos4
 		font = al_load_font("fonts/orbitron black.ttf", 15, 0);
+#else
+		font = al_load_font("Century Schoolbook L Bold.font", 15, 0);
+#endif
 
 	}
 
@@ -863,7 +885,10 @@ int main(int argc, char* argv[])
 			anim->parts[n]->bitmap = sprite_map;
 		}
 
-		copy_bone_data( anim->frames[0]->bones, anim ->final->bones);
+		if (anim->frames)
+		{
+			copy_bone_data(anim->frames[0]->bones, anim->final->bones);
+		}		
 	}
 
 	quit_button.click_fn = quit_button_click;
@@ -883,7 +908,7 @@ int main(int argc, char* argv[])
 
 	getcwd(buffer, sizeof(buffer));
 
-	if (!font) printf("fount not found %s\n", font);
+	if (!font) printf("Font not found\n");
 	if (!disp) printf("display is 0x%X08\n", disp);
 	if (!display_bitmap) printf("fount not found %s\n", display_bitmap);
 
@@ -947,30 +972,30 @@ int main(int argc, char* argv[])
 					last_selected_frame = selected_frame - 1 < 0 ? anim->frameCount - 1 : selected_frame - 1;
 					next_selected_frame = selected_frame + 1 >= anim->frameCount ? selected_frame + 1 - anim->frameCount : selected_frame + 1;
 
-
-					al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 50, 50, 0, "bones %d",  anim ->frames[selected_frame]->boneCount );
-
-
-					for (int i = 0; i < anim->frames[selected_frame]->boneCount; i++)
+					if ((anim) && (anim ->frames) && (selected_frame<anim->frameCount))
 					{
-						al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 50, 80 + (i * 20), 0, "%0.2lf - %0.2lf - ref %s", 
-							anim->frames[selected_frame]->bones[i]->pos.x(),
-							anim->frames[selected_frame]->bones[i]->pos.y(),
-							anim->frames[selected_frame]->bones[i]->pos.ref ? "yes" : "no"
-							);
+						al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 50, 50, 0, "bones %d",  anim -> boneCount );
+
+						for (int i = 0; i < anim->frames[selected_frame]->boneCount; i++)
+						{
+							al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 50, 80 + (i * 20), 0, "%0.2lf - %0.2lf - ref %s", 
+								anim->frames[selected_frame]->bones[i]->pos.x(),
+								anim->frames[selected_frame]->bones[i]->pos.y(),
+								anim->frames[selected_frame]->bones[i]->pos.ref ? "yes" : "no"
+								);
+						}
+
+						if (selected_frame < anim->frameCount)
+						{
+							anim->frames[selected_frame]->draw(al_map_rgb(255, 255, 255));
+						}			
 					}
-
-					if (selected_frame < anim->frameCount)
-					{
-						anim->frames[selected_frame]->draw(al_map_rgb(255, 255, 255));
-					}			
 				}
 
 				al_flip_display();
 				al_clear_to_color(al_map_rgba(100, 100, 100, 255));
 			}
 	
-
 			if (event.type != ALLEGRO_EVENT_TIMER)
 			{
 				for (Button **button = buttons; *button != NULL; button++)
@@ -998,7 +1023,6 @@ int main(int argc, char* argv[])
 				}
 			}
 
-
 			switch (event.type)
 			{
 				case ALLEGRO_EVENT_KEY_DOWN:
@@ -1009,9 +1033,9 @@ int main(int argc, char* argv[])
 
 					MouseIsDown = true;
 
-					if (selected_frame < anim->frameCount)
+					if ((anim ->frames) && (selected_frame < anim->frameCount))
 					{
-						picked_vector = anim->frames[selected_frame]->get_picked_vector( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
+							picked_vector = anim->frames[selected_frame]->get_picked_vector( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
 					}
 					break;
 
@@ -1022,14 +1046,17 @@ int main(int argc, char* argv[])
 					break;
 			}
 
-			if ((mstate.y > 20) && (mstate.y < display_size.y() - 20))
+
+			if ((anim) && (anim ->frames) && (selected_frame<anim->frameCount))
 			{
-				if (MouseIsDown && picked_vector >-1)
+				if ((mstate.y > 20) && (mstate.y < display_size.y() - 20))
 				{
-					anim->frames[selected_frame]->bones[picked_vector]->pos.set_absolute_xy( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
+					if (MouseIsDown && picked_vector >-1)
+					{
+						anim->frames[selected_frame]->bones[picked_vector]->pos.set_absolute_xy( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
+					}
 				}
 			}
-
 		}
 	}
 
@@ -1045,6 +1072,10 @@ int main(int argc, char* argv[])
 	if (font) al_destroy_font(font);
 	if (event_queue) al_destroy_event_queue(event_queue);
 	if (disp) al_destroy_display(disp);
+
+#ifdef __amigaos4__
+		amiga_uninit();
+#endif
 
 	return 0;
 }
