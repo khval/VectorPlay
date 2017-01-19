@@ -89,7 +89,6 @@
     <ClInclude Include="buttons.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="intersect.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="animation.h" />
     <ClInclude Include="SimpleXML.h" />
   </ItemGroup>
