@@ -152,7 +152,9 @@ extern void al_flip_display( void );
 #define al_map_rgb(  r,  g,  b ) 0xFF000000 | (( r <<16) | ( g << 8) |  b )
 #define al_map_rgba( r, g, b, a ) ( ( a << 24) |  ( r <<16) | ( g << 8) | b )
 
-#define al_unmap_rgba ( color, r, g, b, a ) { *(r) = (color >> 16) & 0xFF; *(g) = (color >>8) & 0xFF; *(b) = color & 0xFF; *(a) = (color >> 24) & 0xFF; }
+void al_unmap_rgba( ALLEGRO_COLOR color, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a );
+
+//define al_unmap_rgba ( color, r, g, b, a )  *(r) = (color >> 16) & 0xFF; *(g) = (color >>8) & 0xFF; *(b) = color & 0xFF; *(a) = (color >> 24) & 0xFF; 
 
 extern void al_draw_textf( ALLEGRO_FONT *font, ALLEGRO_COLOR color, double x1, double y1, ULONG flag, char *fmt, ... );
 

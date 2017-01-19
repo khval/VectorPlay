@@ -860,10 +860,22 @@ void al_draw_filled_rounded_rectangle( double x1, double y1, double x2, double y
 	IGraphics -> RectFillColor( &the_rp_dest , (ULONG) x1, (ULONG) y1, (ULONG) x2, (ULONG) y2, color );
  }
 
-void al_draw_filled_rectangle( double x1, double y1, double x2, double y2, double rx, double ry, ALLEGRO_COLOR color )
+void al_draw_filled_rectangle( double x1, double y1, double x2, double y2, ALLEGRO_COLOR color )
 {
 	IGraphics -> RectFillColor( &the_rp_dest , (ULONG) x1, (ULONG) y1, (ULONG) x2, (ULONG) y2, color );
  }
+
+void al_draw_pixel( double x, double y,ALLEGRO_COLOR color )
+{
+	IGraphics -> WritePixelColor( &the_rp_dest , (ULONG) x, (ULONG) y, (ULONG) color );
+}
+
+ void al_draw_line( double x1, double y1, double x2, double y2, ALLEGRO_COLOR color,double thickness )
+{
+	IGraphics -> SetRPAttrs( &the_rp_dest,  RPTAG_APenColor, (ULONG) color, TAG_END );
+	IGraphics -> Move( &the_rp_dest,  (ULONG) x1, (ULONG) y1 );
+	IGraphics -> Draw( &the_rp_dest,  (ULONG) x2, (ULONG) y2 );
+}
 
 void al_draw_rectangle( double x1, double y1, double x2, double y2, ALLEGRO_COLOR color, double thickness)
 {
@@ -962,3 +974,10 @@ void al_destroy_font( ALLEGRO_FONT *font )
 	if (font) IGraphics->CloseFont(font);
 }
 
+void al_unmap_rgba( ALLEGRO_COLOR color, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a )
+{
+	*r = (color >> 16) & 0xFF; 
+	*g = (color >>8) & 0xFF; 
+	*b = color & 0xFF; 
+	*a = (color >> 24) & 0xFF; 
+}
