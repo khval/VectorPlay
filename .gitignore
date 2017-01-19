@@ -5,3 +5,9 @@ SpriteEditor2/Debug/SpriteEditor.log
 SpriteEditor2/Debug/VectorPlay2.tlog/CL.write.1.tlog
 *.pdb
 Debug/VectorPlay2.exe
+*.log
+VectorPlay/Debug/VectorPlay.log
+*.exe
+Debug/VectorPlay2.exe
+*.ilk
+Debug/VectorPlay2.pdb
