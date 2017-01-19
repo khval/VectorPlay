@@ -81,11 +81,26 @@ void Frame::sortBones()
 	bool needs_sorting = true;
 	Bone *t;
 
+	printf("%s::%d\n", __FUNCTION__,__LINE__);
+
+	if (!bones)
+	{
+		printf("this is bad no bones where allocated and in sortBones(), failing badly\n");
+		return;
+	}
+
+	printf("%s::%d\n", __FUNCTION__,__LINE__);
+
 	while (needs_sorting)
 	{
+		printf("%s::%d\n", __FUNCTION__,__LINE__);
+
 		needs_sorting = false;
 		for (a = 0; a < boneCount-1; a++)
 		{
+
+			printf("trying to sort bone %d\n",a);
+
 			if (bones[a]->sort>bones[a + 1]->sort)
 			{
 				t = bones[a];
@@ -308,8 +323,12 @@ void Animation::transform_animation(double p, Frame &before, Frame &current, Fra
 Animation::Animation(int FrameCount, int PartCount, int BoneCount)
 {
 	int n;
-	frames = (Frame **) malloc(sizeof(Frame *) * FrameCount);
-	parts = (Part **)malloc(sizeof(Part  *)* PartCount);
+
+	frames = NULL;
+	parts = NULL;
+
+	if (FrameCount>0) frames = (Frame **) malloc(sizeof(Frame *) * FrameCount);
+	if (PartCount>0) parts = (Part **)malloc(sizeof(Part  *)* PartCount);
 
 	final = new Frame( BoneCount);
 
@@ -320,7 +339,7 @@ Animation::Animation(int FrameCount, int PartCount, int BoneCount)
 
 	for (n = 0; n < partCount; n++)
 	{
-		frames[n] = NULL;
+		parts[n] = NULL;
 	}
 
 	partCount = PartCount;
