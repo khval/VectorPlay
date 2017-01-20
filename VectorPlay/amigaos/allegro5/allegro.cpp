@@ -167,7 +167,22 @@ void al_draw_scaled_rotated_bitmap( ALLEGRO_BITMAP *bm, int offx,int offy, int x
 
 void al_draw_tinted_scaled_rotated_bitmap_region( ALLEGRO_BITMAP *bm, double sx, double sy, double sw,  double sh, ALLEGRO_COLOR tint, double cx, double  cy, double dx,double dy, double xscale, double yscale, double angle, int flags )
 {
-	draw_comp_bitmap_rot( bm, sx, sy,  sw ,  sh, the_rp_dest.BitMap, (int) ((double) sw / 2.0f * xscale ) - (cx * xscale) ,(int) ((double) sh / 2.0f * yscale) - (cy * yscale) ,(int) ((double) sw * xscale ),(int) ((double) sh * yscale), angle);
+	double v0_x,v0_y;
+	double v1_x,v1_y;
+	int tx,ty;
+
+	v0_x  = cos( -angle ) *   cy * yscale;
+	v0_y  =  -sin( -angle ) *  cy * yscale;
+
+	v1_x  = cos( (double) -angle + (M_PI/2) )  *  cx * xscale;
+	v1_y  =  -sin( (double) -angle + (M_PI/2) ) *  cx * xscale;
+
+	tx =  -v0_x - v1_x + dx;
+	ty =  -v0_y - v1_y + dy;
+
+	draw_comp_bitmap_rot( bm, sx, sy,  sw ,  sh, the_rp_dest.BitMap,
+		(int) tx ,(int) ty,
+		(int) ((double) sw * xscale ) ,(int) ((double) sh * yscale) , -angle);
 }
 
 
@@ -862,7 +877,7 @@ void al_draw_filled_rounded_rectangle( double x1, double y1, double x2, double y
 
 void al_draw_filled_rectangle( double x1, double y1, double x2, double y2, ALLEGRO_COLOR color )
 {
-	IGraphics -> RectFillColor( &the_rp_dest , (ULONG) x1, (ULONG) y1, (ULONG) x2, (ULONG) y2, color );
+	IGraphics -> RectFillColor( &the_rp_dest , (ULONG) x1, (ULONG) y1, (ULONG) x2-1, (ULONG) y2-1, color );
  }
 
 void al_draw_pixel( double x, double y,ALLEGRO_COLOR color )
