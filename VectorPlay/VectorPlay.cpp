@@ -127,12 +127,15 @@ void play_button_click(int mousex, int mousey)
 
 void zoom_in_button_click(int mousex, int mousey)
 {
-	zoom /= 2;
+	zoom *= 2;
+	
 }
 
 void zoom_out_button_click(int mousex, int mousey)
 {
-	zoom *= 2;
+	zoom /= 2;
+
+	if (zoom < (1.0f / 4.0f)) zoom = (1.0f / 4.0f);
 }
 
 void speed_down_button_click(int mousex, int mousey)
@@ -158,7 +161,7 @@ void workspace_click(int mousex, int mousey)
 
 	if ((anim->frames) && (selected_frame < anim->frameCount))
 	{
-		picked_vector = anim->frames[selected_frame]->get_picked_vector((mousex - origo.x()) / zoom, (mousey - origo.y()) / zoom);
+		picked_vector = anim->frames[selected_frame]->get_picked_vector((workspace.x() + mousex - origo.x()) / zoom, (workspace.y() + mousey - origo.y()) / zoom);
 	}
 }
 
@@ -388,143 +391,6 @@ void printV(xy &pos)
 //	DPrintF("%lf,%lf\n", pos.x(), pos.y());
 }
 
-Animation *load_xml()
-{
-	SimpleXML doc;
-	SimpleXML *framesObj;
-	SimpleXML *frame;
-	SimpleXML *bonesObj;
-	SimpleXML *bone;
-	SimpleXML *partsObj;
-	SimpleXML *part;
-	Frame *rootframe;
-
-	unsigned int argb;
-
-	Animation *anim = NULL;
-
-	int parts_count = 0;
-	int bones_count = 0;
-	int frames_count = 0;
-
-	doc.load("anim.xml");
-
-	if (partsObj = doc.get_object("parts", 1))
-	{
-		parts_count = partsObj->count("part");
-		delete partsObj;
-	}
-
-	if (bonesObj = doc.get_object("bones", 1))
-	{
-		bones_count = bonesObj->count("bone");
-		delete bonesObj;
-	}
-
-	if (framesObj = doc.get_object("frames", 1))
-	{
-		frames_count = framesObj->count("frame");
-		delete framesObj;
-	}
-
-	anim = new Animation(frames_count,parts_count,bones_count);
-
-	if (!anim) return NULL;
-
-	// Get all info about the skeleton.
-
-	if (partsObj = doc.get_object("parts", 1))
-	{
-		char *name = NULL;
-		xy start;
-		xy end;
-		xy hotspot;
-		double rad;
-
-		parts_count = 0;
-		while (part = partsObj->get_object("part", parts_count + 1))
-		{
-			name = part->get_str_value("name");
-			hotspot = part->get_xy_value("hotspot");
-			start = part->get_xy_value("start");
-			end = part->get_xy_value("end");
-			rad = part->get_double_value("degrees") * 2 * M_PI / 360.0f;
-			
-			anim->parts[parts_count] = new Part(name, NULL, start, end, hotspot, rad);
-
-			if (name) free(name);
-			name = NULL;
-
-			parts_count ++;
-			delete part;
-		}
-
-		delete partsObj;
-	}
-
-	if (bonesObj = doc.get_object("bones", 1))
-	{
-		Bone *theBone;
-		int sort;
-
-		rootframe = (bones_count > 0) ? anim->frames[0] : NULL;
-		
-		bones_count = 0;
-		while (bone = bonesObj->get_object("bone", bones_count + 1))
-		{
-			theBone = rootframe->bones[bones_count];
-
-			argb = bone->get_hex_value("color");
-			theBone->color = al_map_rgba((argb & 0xFF0000) >> 16, (argb & 0xFF00) >> 8, argb & 0xFF, (argb & 0xFF000000) >> 24 );
-			theBone->name = bone->get_str_value("name");
-			theBone->connectedTo = bone->get_str_value("connectedTo");
-			theBone->pos.length_min = bone->get_double_value("min");
-			theBone->pos.length_max = bone->get_double_value("max");
-			theBone->sort = bone->get_int_value("sort");
-
-			if (char *partname = bone->get_str_value("part"))
-			{
-				theBone->part = anim->findPart(partname);
-				free(partname);
-			}
-
-			bones_count++;
-			delete bone;
-		}
-
-		delete bonesObj;
-	}
-
-
-	if (framesObj = doc.get_object("frames",1))
-	{
-		frames_count = 0;
-
-		while (frame = framesObj->get_object("frame",frames_count + 1))
-		{
-			bones_count = 0;
-
-			if (bonesObj = frame->get_object("bones", 1))
-			{
-				while (bone = bonesObj->get_object("bone", bones_count + 1))
-				{
-					anim->frames[frames_count]->bones[bones_count]->pos.rel_x = bone->get_double_value("x");
-					anim->frames[frames_count]->bones[bones_count]->pos.rel_y = bone->get_double_value("y");
-
-					bones_count++;
-					delete bone;
-				}
-				delete bonesObj;
-			}
-			frames_count++;
-			delete frame;
-		}
-
-		delete framesObj;
-	}
-
-	return anim;
-}
 
 void copy_bone_data(Bone **rootbones,Bone **currentbones)
 {
@@ -549,6 +415,240 @@ void copy_bone_data(Bone **rootbones,Bone **currentbones)
 			}
 		}
 	}
+}
+
+void resize_buttons()
+{
+	if (font)
+	{
+		int bx, by;
+		int w, h, hh;
+
+		hh = 0;
+
+		for (Button **button = buttons; *button != NULL; button++)
+		{
+			if ((*button)->text)
+			{
+				if (strlen((*button)->text) > 0)
+				{
+					al_get_text_dimensions(font, (*button)->text, &bx, &by, &w, &h);
+					(*button)->width = w + 20;
+					if (h > hh) hh = h;
+				}
+			}
+		}
+
+		for (Button **button = buttons; *button != NULL; button++)
+		{
+			if ((*button)->text)
+			{
+				if (strlen((*button)->text) > 0)
+				{
+					(*button)->height = hh + 10;
+				}
+			}
+		}
+	}
+}
+
+Animation *load_xml( char *filename )
+{
+	SimpleXML doc;
+	SimpleXML *EditorObj;
+	SimpleXML *framesObj;
+	SimpleXML *frame;
+	SimpleXML *bonesObj;
+	SimpleXML *bone;
+	SimpleXML *partsObj;
+	SimpleXML *part;
+	Frame *rootframe;
+
+	unsigned int argb;
+
+	Animation *anim = NULL;
+
+	int parts_count = 0;
+	int bones_count = 0;
+	int frames_count = 0;
+
+	doc.load( filename );
+
+	if (EditorObj = doc.get_object("editor", 1))
+	{
+		zoom = EditorObj->get_double_value("zoom");
+		delete EditorObj;
+	}
+
+	if (partsObj = doc.get_object("parts", 1))
+	{
+		parts_count = partsObj->count("part");
+		delete partsObj;
+	}
+
+	if (bonesObj = doc.get_object("bones", 1))
+	{
+		bones_count = bonesObj->count("bone");
+		delete bonesObj;
+	}
+
+	if (framesObj = doc.get_object("frames", 1))
+	{
+		frames_count = framesObj->count("frame");
+		delete framesObj;
+	}
+
+	anim = new Animation(frames_count, parts_count, bones_count);
+
+	if (!anim) return NULL;
+
+	// Get all info about the skeleton.
+
+	if (partsObj = doc.get_object("parts", 1))
+	{
+		char *name = NULL;
+		xy start;
+		xy end;
+		xy hotspot;
+		double rad;
+
+		parts_count = 0;
+		while (part = partsObj->get_object("part", parts_count + 1))
+		{
+			name = part->get_str_value("name");
+			hotspot = part->get_xy_value("hotspot");
+			start = part->get_xy_value("start");
+			end = part->get_xy_value("end");
+			rad = part->get_double_value("degrees") * 2 * M_PI / 360.0f;
+
+			anim->parts[parts_count] = new Part(name, NULL, start, end, hotspot, rad);
+
+			if (name) free(name);
+			name = NULL;
+
+			parts_count++;
+			delete part;
+		}
+
+		delete partsObj;
+	}
+
+	if (bonesObj = doc.get_object("bones", 1))
+	{
+		Bone *theBone;
+		int sort;
+
+		rootframe = (bones_count > 0) ? anim->frames[0] : NULL;
+
+		bones_count = 0;
+		while (bone = bonesObj->get_object("bone", bones_count + 1))
+		{
+			theBone = rootframe->bones[bones_count];
+
+			argb = bone->get_hex_value("color");
+			theBone->color = al_map_rgba((argb & 0xFF0000) >> 16, (argb & 0xFF00) >> 8, argb & 0xFF, (argb & 0xFF000000) >> 24);
+			theBone->name = bone->get_str_value("name");
+			theBone->connectedTo = bone->get_str_value("connectedTo");
+			theBone->pos.length_min = bone->get_double_value("min");
+			theBone->pos.length_max = bone->get_double_value("max");
+			theBone->sort = bone->get_int_value("sort");
+
+			if (char *partname = bone->get_str_value("part"))
+			{
+				theBone->part = anim->findPart(partname);
+				free(partname);
+			}
+
+			bones_count++;
+			delete bone;
+		}
+
+		delete bonesObj;
+	}
+
+
+	if (framesObj = doc.get_object("frames", 1))
+	{
+		frames_count = 0;
+
+		while (frame = framesObj->get_object("frame", frames_count + 1))
+		{
+			bones_count = 0;
+
+			if (bonesObj = frame->get_object("bones", 1))
+			{
+				while (bone = bonesObj->get_object("bone", bones_count + 1))
+				{
+					anim->frames[frames_count]->bones[bones_count]->pos.rel_x = bone->get_double_value("x");
+					anim->frames[frames_count]->bones[bones_count]->pos.rel_y = bone->get_double_value("y");
+
+					bones_count++;
+					delete bone;
+				}
+				delete bonesObj;
+			}
+			frames_count++;
+			delete frame;
+		}
+
+		delete framesObj;
+	}
+
+	if (zoom < (1.0f / 4.0f)) zoom = (1.0f / 4.0f);
+
+	return anim;
+}
+
+void save_xml(Animation *anim, char *filename)
+{
+	FILE *fd;
+	int a;
+
+	if (!anim) return;
+
+	if (fd = fopen(filename, "w"))
+	{
+		fprintf(fd, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		fprintf(fd, "<main>\n");
+
+		fprintf(fd, "<editor>\n");
+		fprintf(fd, "<zoom>%0.2lf</zoom>\n", zoom);
+		fprintf(fd, "</editor>\n");
+
+		fprintf(fd, "<parts>\n");
+		for (int p = 0; p < anim->partCount; p++)
+		{
+			if (anim->parts[p])	anim->parts[p]->save(fd);
+		}
+		fprintf(fd, "</parts>\n");
+
+		fprintf(fd, "<bones>\n");
+		for (int b = 0; b < anim->boneCount; b++)
+		{
+			anim->frames[0]->bones[b]->save(fd);
+		}
+		fprintf(fd, "</bones>\n");
+
+		fprintf(fd, "<frames>\n");
+		for (a = 0; a < anim->frameCount; a++)
+		{
+			fprintf(fd, "<frame>\n");
+
+			fprintf(fd, "<bones>\n");
+			for (int n = 0; n < anim->boneCount; n++)
+			{
+				anim->frames[a]->bones[n]->save_pos(fd);
+			}
+			fprintf(fd, "</bones>\n");
+
+			fprintf(fd, "</frame>\n");
+		}
+		fprintf(fd, "</frames>\n");
+		fprintf(fd, "</main>\n");
+
+		fclose(fd);
+	}
+
 }
 
 void fix_anim()
@@ -578,52 +678,6 @@ void fix_anim()
 	}
 }
 
-void save_xml( Animation *anim )
-{
-	FILE *fd;
-	int a;
-
-	if (!anim) return;
-
-	if (fd = fopen("anim.xml", "w"))
-	{
-		fprintf(fd, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		fprintf(fd, "<main>\n");
-
-		fprintf(fd, "<parts>\n");
-		for (int p = 0; p < anim->partCount; p++)
-		{
-			if (anim->parts[p])	anim->parts[p]->save(fd);
-		}
-		fprintf(fd, "</parts>\n");
-
-		fprintf(fd, "<bones>\n");
-		for (int b = 0; b < anim -> boneCount; b++)
-		{
-			anim->frames[0]->bones[b]->save(fd);
-		}
-		fprintf(fd, "</bones>\n");
-		
-		fprintf(fd, "<frames>\n");
-		for (a = 0; a < anim->frameCount ; a++)
-		{
-			fprintf(fd, "<frame>\n");
-
-			fprintf(fd, "<bones>\n");
-			for (int n = 0; n < anim ->boneCount; n++)
-			{
-				anim->frames[a]->bones[n]->save_pos(fd);
-			}
-			fprintf(fd, "</bones>\n");
-
-			fprintf(fd, "</frame>\n");
-		}
-		fprintf(fd, "</frames>\n");
-		fprintf(fd, "</main>\n");
-		
-		fclose(fd);
-	}
-}
 
 void keyboard(int keycode)
 {
@@ -657,6 +711,7 @@ int main(int argc, char* argv[])
 	ALLEGRO_MOUSE_STATE mstate;
 	ALLEGRO_TIMER *timer = NULL;
 	char buffer[1000];
+
 
 
 #ifdef __amigaos4__
@@ -695,7 +750,7 @@ int main(int argc, char* argv[])
 
 	origo = display_size / 2;
 
-	anim = load_xml();
+	anim = load_xml("anim.xml");
 
 	if (!anim)
 	{
@@ -715,6 +770,8 @@ int main(int argc, char* argv[])
 			copy_bone_data(anim->frames[0]->bones, anim->final->bones);
 		}		
 	}
+
+	resize_buttons();
 
 	quit_button.click_fn = quit_button_click;
 	timeline_button.click_fn = click_timeline;
@@ -839,7 +896,7 @@ int main(int argc, char* argv[])
 
 	if (anim)
 	{
-		save_xml(anim);
+		save_xml(anim,"anim.xml");
 		delete anim;
 		anim = NULL;
 	}
