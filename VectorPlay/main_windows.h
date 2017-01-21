@@ -95,13 +95,9 @@ public:
 	xy get_relative();
 #endif
 
-
 	void set_angel_vector(double rad, double length);
-
 	double height_at_origo(xy offset);
-
 	void limit();
-
 };
 
 class rect
