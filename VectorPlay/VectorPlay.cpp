@@ -64,6 +64,8 @@ double speed = 1;
 int delay = 20;
 
 int mouse_picked_corner = 0;
+int picked_vector = -1;
+bool MouseIsDown = false;
 
 extern void BasicFileOpen();
 
@@ -75,7 +77,10 @@ Button zoom_out_button(0, 10, &zoom_in_button, NULL, 80, 20, "Zoom out");
 Button speed_down_button(0, 10, &zoom_out_button, NULL, 120, 20, "Speed down");
 Button speed_up_button(0, 10, &speed_down_button, NULL, 120, 20, "Speed up");
 Button timeline_button(0, display_size.y() - 20, NULL, NULL, display_size.x(), 20, "");
-Button *buttons[] = { &quit_button, &play_button, &display_mode_button, &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, NULL };
+Button workspace(10, 0, NULL, &quit_button, 1, 1, "");
+Button *buttons[] = { &quit_button, &play_button, &display_mode_button, &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, NULL };
+
+void draw_all_curvs();
 
 void quit_button_click(int mousex, int mousey)
 {
@@ -151,6 +156,63 @@ void speed_up_button_click(int mousex, int mousey)
 void click_timeline(int mousex, int mousey)
 {
 	selected_frame = anim -> frameCount * mousex / timeline_button.width;
+}
+
+void workspace_click(int mousex, int mousey)
+{
+	MouseIsDown = true;
+
+	if ((anim->frames) && (selected_frame < anim->frameCount))
+	{
+		picked_vector = anim->frames[selected_frame]->get_picked_vector((mousex - origo.x()) / zoom, (mousey - origo.y()) / zoom);
+	}
+}
+
+void workspace_draw(Button *me)
+{
+	if ((play) || (display_mode))
+	{
+		int last_selected_frame;
+		int next_selected_frame;
+
+		last_selected_frame = selected_frame - 1 < 0 ? anim->frameCount - 1 : selected_frame - 1;
+		next_selected_frame = selected_frame + 1 >= anim->frameCount ? selected_frame + 1 - anim->frameCount : selected_frame + 1;
+
+		if (selected_frame < anim->frameCount)
+		{
+			anim->transform_animation((double)delay / 100.0f, *anim->frames[last_selected_frame], *anim->frames[selected_frame], *anim->frames[next_selected_frame]);
+		}
+
+		draw_all_curvs();
+		anim->final->draw(al_map_rgb(255, 0, 255));
+	}
+	else
+	{
+		int last_selected_frame;
+		int next_selected_frame;
+
+		last_selected_frame = selected_frame - 1 < 0 ? anim->frameCount - 1 : selected_frame - 1;
+		next_selected_frame = selected_frame + 1 >= anim->frameCount ? selected_frame + 1 - anim->frameCount : selected_frame + 1;
+
+		if ((anim) && (anim->frames) && (selected_frame<anim->frameCount))
+		{
+			al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 50, 50, 0, "bones %d", anim->boneCount);
+
+			for (int i = 0; i < anim->frames[selected_frame]->boneCount; i++)
+			{
+				al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 50, 80 + (i * 20), 0, "%0.2lf - %0.2lf - ref %s",
+					anim->frames[selected_frame]->bones[i]->pos.x(),
+					anim->frames[selected_frame]->bones[i]->pos.y(),
+					anim->frames[selected_frame]->bones[i]->pos.ref ? "yes" : "no"
+					);
+			}
+
+			if (selected_frame < anim->frameCount)
+			{
+				anim->frames[selected_frame]->draw(al_map_rgb(255, 255, 255));
+			}
+		}
+	}
 }
 
 void draw_timeline(Button *me)
@@ -828,15 +890,11 @@ int main(int argc, char* argv[])
 	ALLEGRO_MOUSE_STATE mstate;
 	ALLEGRO_TIMER *timer = NULL;
 	char buffer[1000];
-	bool MouseIsDown = false;
+
 
 #ifdef __amigaos4__
 	amiga_init();
 #endif
-
-//	xy vtest (1.0f,2.0f);
-//	xy vtest2 ( 10.0f, 20.0f );
-
 
 	if (!al_init())	return -1;
 
@@ -906,6 +964,11 @@ int main(int argc, char* argv[])
 	speed_down_button.click_fn = speed_down_button_click;
 	speed_up_button.click_fn = speed_up_button_click;
 
+	workspace.click_fn = workspace_click;
+	workspace.draw_fn = workspace_draw;
+	workspace.width = display_size.x() - (workspace.x() * 2);
+	workspace.height =  timeline_button.y() - 10 - workspace.y() ;
+
 	getcwd(buffer, sizeof(buffer));
 
 	if (!font) printf("Font not found\n");
@@ -915,7 +978,7 @@ int main(int argc, char* argv[])
 	if ((event_queue) && (disp) && (font))
 	{
 		int n0 = 0, n1 = 0;
-		int picked_vector;
+
 		double endX = 0;
 		double startX = 0;
 		double workspace_selected = false;
@@ -945,50 +1008,6 @@ int main(int argc, char* argv[])
 						{
 							(*button)->Draw();
 						}
-					}
-				}
-
-				if ((play) || (display_mode))
-				{
-					int last_selected_frame;
-					int next_selected_frame;
-
-					last_selected_frame = selected_frame - 1 < 0 ? anim->frameCount - 1 : selected_frame - 1;
-					next_selected_frame = selected_frame + 1 >= anim->frameCount ? selected_frame + 1 - anim->frameCount : selected_frame + 1;
-
-					if (selected_frame < anim->frameCount)
-					{
-						anim -> transform_animation((double)delay / 100.0f, *anim->frames[last_selected_frame], *anim->frames[selected_frame], *anim->frames[next_selected_frame]);
-					}
-
-					draw_all_curvs();
-					anim -> final ->draw(al_map_rgb(255, 0, 255));
-				}
-				else
-				{
-					int last_selected_frame;
-					int next_selected_frame;
-
-					last_selected_frame = selected_frame - 1 < 0 ? anim->frameCount - 1 : selected_frame - 1;
-					next_selected_frame = selected_frame + 1 >= anim->frameCount ? selected_frame + 1 - anim->frameCount : selected_frame + 1;
-
-					if ((anim) && (anim ->frames) && (selected_frame<anim->frameCount))
-					{
-						al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 50, 50, 0, "bones %d",  anim -> boneCount );
-
-						for (int i = 0; i < anim->frames[selected_frame]->boneCount; i++)
-						{
-							al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 50, 80 + (i * 20), 0, "%0.2lf - %0.2lf - ref %s", 
-								anim->frames[selected_frame]->bones[i]->pos.x(),
-								anim->frames[selected_frame]->bones[i]->pos.y(),
-								anim->frames[selected_frame]->bones[i]->pos.ref ? "yes" : "no"
-								);
-						}
-
-						if (selected_frame < anim->frameCount)
-						{
-							anim->frames[selected_frame]->draw(al_map_rgb(255, 255, 255));
-						}			
 					}
 				}
 
@@ -1030,13 +1049,6 @@ int main(int argc, char* argv[])
 					break;
 
 				case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-
-					MouseIsDown = true;
-
-					if ((anim ->frames) && (selected_frame < anim->frameCount))
-					{
-							picked_vector = anim->frames[selected_frame]->get_picked_vector( (mstate.x - origo.x()) / zoom, (mstate.y - origo.y()) / zoom);
-					}
 					break;
 
 				case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
