@@ -90,7 +90,10 @@
     <ClInclude Include="debug.h" />
     <ClInclude Include="intersect.h" />
     <ClInclude Include="animation.h" />
+    <ClInclude Include="main_amigaos4.h" />
+    <ClInclude Include="main_windows.h" />
     <ClInclude Include="SimpleXML.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
@@ -99,11 +102,17 @@
     <ClCompile Include="intersect.cpp" />
     <ClCompile Include="SelectFileWindows.cpp" />
     <ClCompile Include="SimpleXML.cpp" />
+    <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="VectorPlay.cpp" />
     <ClCompile Include="vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="makefile" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Gfx\Player.png" />
+    <Image Include="Gfx\show.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
