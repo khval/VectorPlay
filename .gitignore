@@ -16,3 +16,8 @@ Debug/VectorPlay2.exe
 Debug/VectorPlay2.pdb
 *.idb
 VectorPlay/Debug/VectorPlay.log
+*.exe
+Debug/VectorPlay2.pdb
+*.ilk
+VectorPlay/Debug/vc120.idb
+VectorPlay/Debug/VectorPlay.log
