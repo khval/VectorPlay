@@ -50,8 +50,10 @@ xy display_size(800,600);
 xy mousePos;
 xy origo;
 
-Animation *anim = NULL;
+extern char *BasicFileSave(int *errorcode);
+extern char *BasicFileOpen(int *errorcode);
 
+Animation *anim = NULL;
 
 //Frame *animation;
 
@@ -67,18 +69,24 @@ int picked_vector = -1;
 bool MouseIsDown = false;
 
 extern void BasicFileOpen();
+void copy_bone_data(Bone **rootbones, Bone **currentbones);
+void draw_all_curvs();
+void fix_anim();
+void save_xml(Animation *anim, char *filename);
+Animation *load_xml(char *filename);
 
 Button quit_button(10, 10, NULL, NULL, 50, 20, "Quit");
-Button play_button(0, 10, &quit_button, NULL, 50, 20, "Play");
+Button load_button(0, 10, &quit_button, NULL, 50, 20, "Load");
+Button save_button(0, 10, &load_button, NULL, 50, 20, "Save");
+Button play_button(0, 10, &save_button, NULL, 50, 20, "Play");
 Button zoom_in_button(0, 10, &play_button, NULL, 80, 20, "Zoom in");
 Button zoom_out_button(0, 10, &zoom_in_button, NULL, 80, 20, "Zoom out");
 Button speed_down_button(0, 10, &zoom_out_button, NULL, 120, 20, "Speed down");
 Button speed_up_button(0, 10, &speed_down_button, NULL, 120, 20, "Speed up");
 Button timeline_button(0, display_size.y() - 20, NULL, NULL, display_size.x(), 20, "");
 Button workspace(10, 0, NULL, &quit_button, 1, 1, "");
-Button *buttons[] = { &quit_button, &play_button,  &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, NULL };
+Button *buttons[] = { &quit_button, &play_button, &load_button, &save_button, &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, NULL };
 
-void draw_all_curvs();
 
 void quit_button_click(int mousex, int mousey)
 {
@@ -143,6 +151,52 @@ void speed_down_button_click(int mousex, int mousey)
 	speed /= 2.0f;
 
 	if (speed < (1.0f / 4.0f)) speed = 1.0f / 2.0f;
+}
+
+void save_button_click(int mousex, int mousey)
+{
+	int error_code;
+	char *name;
+
+	if (name = BasicFileSave(&error_code))
+	{
+		save_xml(anim,name);
+		free(name);
+	}
+}
+
+void load_button_click(int mousex, int mousey)
+{
+	int error_code;
+	char *name;
+
+	if (name = BasicFileOpen(&error_code))
+	{
+		delete anim;
+
+		anim = load_xml(name);
+
+		if (!anim)
+		{
+			anim = new Animation(0, 0, 0);
+		}
+		else
+		{
+			fix_anim();
+
+			for (int n = 0; n < anim->partCount; n++)
+			{
+				anim->parts[n]->bitmap = sprite_map;
+			}
+
+			if (anim->frames)
+			{
+				copy_bone_data(anim->frames[0]->bones, anim->final->bones);
+			}
+		}
+
+		free(name);
+	}
 }
 
 void speed_up_button_click(int mousex, int mousey)
@@ -773,6 +827,10 @@ int main(int argc, char* argv[])
 
 	resize_buttons();
 
+
+	load_button.click_fn = load_button_click;
+	save_button.click_fn = save_button_click;
+	
 	quit_button.click_fn = quit_button_click;
 	timeline_button.click_fn = click_timeline;
 	
@@ -782,11 +840,10 @@ int main(int argc, char* argv[])
 	zoom_in_button.click_fn = zoom_in_button_click;
 	zoom_out_button.click_fn = zoom_out_button_click;
 	play_button.click_fn = play_button_click;
-
 	speed_down_button.click_fn = speed_down_button_click;
 	speed_up_button.click_fn = speed_up_button_click;
-
 	workspace.click_fn = workspace_click;
+
 	workspace.draw_fn = workspace_draw;
 	workspace.width = display_size.x() - (workspace.x() * 2);
 	workspace.height =  timeline_button.y() - 10 - workspace.y() ;
