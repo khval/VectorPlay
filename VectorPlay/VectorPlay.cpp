@@ -51,7 +51,6 @@ xy mousePos;
 xy origo;
 
 Animation *anim = NULL;
-//Frame *frame_current = NULL;
 
 
 //Frame *animation;
@@ -247,7 +246,6 @@ void draw_timeline(Button *me)
 
 }
 
-
 void draw_play(Button *me)
 {
 	double sx, sy;
@@ -364,159 +362,6 @@ void curv(xy p0, xy p1, xy p2)
 	}
 }
 
-#ifdef liniar_movement
-
-void transform_animation_bone(int n, double p, xy &before, xy &current, xy &after, xy &d)
-{
-	xy partof;
-#ifdef relative
-	xy delta( after.rel_x - current.rel_x, after.rel_y - current.rel_y );
-	partof = delta * p;
-	d = current.get_relative() + partof;
-#endif
-
-}
-
-
-#ifdef relative
-
-void transform_animation_bone_recursive(int n, double p, xy &before, xy &current, xy &after, xy &d)
-{
-	xy rec;
-	xy bone;
-
-	if (current.ref)
-	{
-		transform_animation_bone_recursive(n, p, *before.ref, *current.ref, *after.ref, rec);
-	}
-
-	transform_animation_bone(n, p, before, current, after, bone);
-
-	d = bone + rec;
-}
-
-
-#endif
-
-void transform_animation_visual(double p, Frame &before, Frame &current, Frame &after)
-{
-	int n = 0;
-	xy bone;
-
-	for (n = 0; n < current.boneCount; n++)
-	{
-		transform_animation_bone_recursive(n, p, before.bones[n]->pos, current.bones[n]->pos, after.bones[n]->pos, bone);
-
-		al_draw_pixel(bone.x(), bone.y(), al_map_rgba(255, 255, 255, 255));
-	}
-}
-
-#endif
-
-#ifndef liniar_movement
-
-void transform_animation(double p, Frame &before, Frame &current, Frame &after, Frame &d)
-{
-	int n = 0;
-	double x, y;
-	xy ret;
-	xy ghost0;
-	xy ghost1;
-
-	for (n = 0; n < e_bone_count; n++)
-	{
-		ghost0 = current.control_points[n * 2 + 0] - before.control_points[n * 2 + 1];
-		ghost1 = after.control_points[n * 2 + 0] - current.control_points[n * 2 + 1];
-
-		if (p < 0.5f)
-		{
-			ret = curv_xy(p * 2,
-				ghost0 / 2 + before.control_points[n * 2 + 1],
-				current.control_points[n * 2 + 0],
-#ifdef relaive
-				{ current.bone[n].pos.rel_x, current.bone[n].pos.rel_y }
-#else
-				current.bone[n].pos
-#endif
-				);
-
-		}
-		else
-		{
-			ret = curv_xy((p-0.5f) * 2,
-#ifdef relaive
-				{ current.bone[n].pos.rel_x, current.bone[n].pos.rel_y },
-#else
-				current.bone[n].pos,
-#endif
-				current.control_points[n * 2 + 1],
-				ghost1 / 2 + current.control_points[n * 2 + 1]
-				);
-		}
-
-#ifdef relaive
-
-		d.bone[n].pos.rel_x = ret.x();
-		d.bone[n].pos.rel_y = ret.y();
-
-#else
-
-		d.bone[n].pos.set_relative(ret.x(), ret.y());
-#endif
-	}
-
-	for (n = 0; n < e_bone_count; n++)
-	{
-		d.bone[n].pos.limit();
-	}
-}
-
-
-void transform_animation_visual( Frame &before, Frame &current, Frame &after)
-{
-	int n = 0;
-	double x, y;
-	xy ret;
-	xy ghost0;
-	xy ghost1;
-
-	for (n = 0; n < e_bone_count; n++)
-	{
-		ghost0 = current.control_points[n * 2 + 0] - before.control_points[n * 2 + 1];
-		ghost1 = after.control_points[n * 2 + 0] - current.control_points[n * 2 + 1];
-
-			curv(
-#ifdef relaive
-				current.bone[n].pos.ref,
-#endif
-				ghost0 / 2 + before.control_points[n * 2 + 1],
-				current.control_points[n * 2 + 0],
-#ifdef relaive
-				{ current.bone[n].pos.rel_x, current.bone[n].pos.rel_y }
-#else
-				current.bone[n].pos
-#endif
-				);
-
-			curv(
-#ifdef relaive
-				current.bone[n].pos.ref,
-#endif
-
-#ifdef relaive
-				{ current.bone[n].pos.rel_x, current.bone[n].pos.rel_y },
-#else
-				current.bone[n].pos,
-#endif
-				current.control_points[n * 2 + 1],
-				ghost1 / 2 + current.control_points[n * 2 + 1]
-				);
-		
-	}
-}
-
-#endif
-
 void draw_all_curvs()
 {
 	int last_selected_frame;
@@ -537,63 +382,6 @@ void draw_all_curvs()
 	}
 }
 
-/*void transform_animation(double p, Frame &a0, Frame &a1, Frame &d)
-{
-	int n = 0;
-	double x, y;
-
-	for (n = 0; n < e_bone_count; n++)
-	{
-		x = (a0.bone[n].pos.x() * (1.0f - p)) + (a1.bone[n].pos.x() * p);
-		y = (a0.bone[n].pos.y() * (1.0f - p)) + (a1.bone[n].pos.y() * p);
-
-		d.bone[n].pos.set_relative(x, y);
-
-	}
-
-	for (n = 0; n < e_bone_count; n++)
-	{
-		d.bone[n].pos.limit();
-	}
-}
-*/
-/*
-
-void transform_animation(double p, Animation &a0, Animation &a1, Animation &dest)
-{
-	int n = 0;
-
-	double rad0;
-	double rad1;
-	double rad;
-	double rad_d;
-	double rad_d_abs;
-
-	for (n = 0; n < e_bone_count; n++)
-	{
-		rad0 = a0.bone[n].pos.rad();
-		rad1 = a1.bone[n].pos.rad();
-
-		rad_d = rad1 - rad0;		
-		rad_d_abs = rad_d < 0 ? -rad_d : rad_d;
-
-		if (rad_d_abs > M_PI)
-		{
-			if (rad1 > rad0)
-			{
-				rad1 -= M_PI;
-			}
-			else
-			{
-				rad0 -= M_PI;
-			}
-			rad_d = rad1 - rad0;
-		}
-
-		dest.bone[n].pos.set_angel_vector(rad_d * p + rad0,a0.bone[n].pos.length());
-	}
-}
-*/
 
 void printV(xy &pos)
 {
