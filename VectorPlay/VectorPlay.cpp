@@ -71,14 +71,13 @@ extern void BasicFileOpen();
 
 Button quit_button(10, 10, NULL, NULL, 50, 20, "Quit");
 Button play_button(0, 10, &quit_button, NULL, 50, 20, "Play");
-Button display_mode_button(0, 10, &play_button, NULL, 140, 20, "Show as play");
-Button zoom_in_button(0, 10, &display_mode_button, NULL, 80, 20, "Zoom in");
+Button zoom_in_button(0, 10, &play_button, NULL, 80, 20, "Zoom in");
 Button zoom_out_button(0, 10, &zoom_in_button, NULL, 80, 20, "Zoom out");
 Button speed_down_button(0, 10, &zoom_out_button, NULL, 120, 20, "Speed down");
 Button speed_up_button(0, 10, &speed_down_button, NULL, 120, 20, "Speed up");
 Button timeline_button(0, display_size.y() - 20, NULL, NULL, display_size.x(), 20, "");
 Button workspace(10, 0, NULL, &quit_button, 1, 1, "");
-Button *buttons[] = { &quit_button, &play_button, &display_mode_button, &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, NULL };
+Button *buttons[] = { &quit_button, &play_button,  &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, NULL };
 
 void draw_all_curvs();
 
@@ -126,10 +125,6 @@ void play_button_click(int mousex, int mousey)
 	}
 }
 
-void display_mode_click(int mousex, int mousey)
-{
-	display_mode = !display_mode;
-}
 
 void zoom_in_button_click(int mousex, int mousey)
 {
@@ -170,7 +165,7 @@ void workspace_click(int mousex, int mousey)
 
 void workspace_draw(Button *me)
 {
-	if ((play) || (display_mode))
+	if (play) 
 	{
 		int last_selected_frame;
 		int next_selected_frame;
@@ -268,22 +263,6 @@ void draw_play(Button *me)
 		al_draw_textf(font, al_map_rgb(255, 255, 255), me->x() + sx, me->y() + sy, 0, (char *) "%s", me->text);
 	}
 
-}
-
-void draw_display_mode(Button *me)
-{
-	double sx, sy;
-	if (display_mode)
-	{
-		al_draw_filled_rectangle(me->x() + 1, me->y() + 1, me->x() + me->width - 1, me->y() + me->height - 1, al_map_rgb(0, 0, 255));
-	}
-	if (me->text)
-	{
-		sx = me->width / 2 - (al_get_text_width(font, me->text) / 2);
-		sy = me->height / 2 - (al_get_font_line_height(font) / 2);
-
-		al_draw_textf(font, al_map_rgb(255, 255, 255), me->x() + sx, me->y() + sy, 0, (char *) "%s", me->text);
-	}
 }
 
 
@@ -954,12 +933,10 @@ int main(int argc, char* argv[])
 	
 	timeline_button.draw_fn = draw_timeline;
 	play_button.draw_fn = draw_play;
-	display_mode_button.draw_fn = draw_display_mode;
 
 	zoom_in_button.click_fn = zoom_in_button_click;
 	zoom_out_button.click_fn = zoom_out_button_click;
 	play_button.click_fn = play_button_click;
-	display_mode_button.click_fn = display_mode_click;
 
 	speed_down_button.click_fn = speed_down_button_click;
 	speed_up_button.click_fn = speed_up_button_click;
