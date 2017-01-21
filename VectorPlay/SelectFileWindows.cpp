@@ -19,10 +19,60 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include <windows.h>
 
 
+
 // basicly we get a filename if was success, or else NULL
 // error code can be read, but wont be correct on different OS's for now.
 
-char *BasicFileOpen( int &errorcode )
+
+int wstrlen( TCHAR * wstr)
+{
+	int l_idx = 0;
+	while (((char*)wstr)[l_idx] != 0) l_idx += 2;
+	return l_idx;
+}
+
+char *wstrdup(TCHAR *wSrc)
+{
+	int l_idx = 0;
+	int l_len = wstrlen(wSrc);
+	char *l_nstr = (char *)malloc(l_len);
+	if (l_nstr) {
+		do {
+			l_nstr[l_idx] = (char)wSrc[l_idx];
+			l_idx++;
+		} while ((char)wSrc[l_idx] != 0);
+	}
+	l_nstr[l_idx] = 0;
+	return l_nstr;
+}
+
+
+char *BasicFileSave(int *errorcode)
+{
+	TCHAR filename[MAX_PATH] = TEXT("\0");
+	OPENFILENAME   ofn;
+	HANDLE hFile = INVALID_HANDLE_VALUE;
+
+	memset(&(ofn), 0, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = NULL;
+	ofn.lpstrFile = filename;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFilter = TEXT("Save xml (*.xml)\0*.xml\0");
+	ofn.lpstrTitle = TEXT("Save animation xml As");
+	ofn.Flags = OFN_HIDEREADONLY;
+	ofn.lpstrDefExt = TEXT("txt");
+
+	if (GetSaveFileNameW(&ofn))
+	{
+		return wstrdup( filename);
+	}
+	
+	return NULL;
+}
+
+
+char *BasicFileOpen( int *errorcode )
 {
 	char filename[MAX_PATH];
 
@@ -32,22 +82,22 @@ char *BasicFileOpen( int &errorcode )
 
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = NULL;  // If you have a window to center over, put its HANDLE here
-	ofn.lpstrFilter =  "Text Files\0*.txt\0Any File\0*.*\0";
+	ofn.lpstrFilter =  "anim xml\0*.xml\0Any File\0*.*\0";
 	ofn.lpstrFile =  filename;
 	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrTitle = "Select a File, yo!";
+	ofn.lpstrTitle = "Select animation xml file!";
 	ofn.Flags = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
 
 	if (GetOpenFileNameA( &ofn))
 	{
 //		std::cout << "You chose the file \"" << filename << "\"\n";
-		errorcode = 0;
+		*errorcode = 0;
 		return strdup(filename);
 	}
 	else
 	{
 		// we don't care about OS, or what error code is for now, this just quick implmentation.
-		errorcode = CommDlgExtendedError();
+		*errorcode = CommDlgExtendedError();
 
 		/*
 		// All this stuff below is to tell you exactly how you messed up above. 
