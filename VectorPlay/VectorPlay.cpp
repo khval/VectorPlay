@@ -50,6 +50,9 @@ xy display_size(800,600);
 xy mousePos;
 xy origo;
 
+ALLEGRO_EVENT_QUEUE *event_queue;
+ALLEGRO_TIMER *timer = NULL;
+
 extern char *BasicFileSave(int *errorcode);
 extern char *BasicFileOpen(int *errorcode);
 
@@ -158,17 +161,27 @@ void save_button_click(int mousex, int mousey)
 	int error_code;
 	char *name;
 
+	// this is a Windows and Linux bug fix, 
+	// the event que can fill up so badly the program can't handel anything else then FPS timer.
+	// on AmigaOS the event que is not in a thread, so the event que won't get filled up.
+
+	al_unregister_event_source(event_queue, al_get_timer_event_source(timer));
+
 	if (name = BasicFileSave(&error_code))
 	{
 		save_xml(anim,name);
 		free(name);
 	}
+
+	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 }
 
 void load_button_click(int mousex, int mousey)
 {
 	int error_code;
 	char *name;
+
+	al_unregister_event_source(event_queue, al_get_timer_event_source(timer));
 
 	if (name = BasicFileOpen(&error_code))
 	{
@@ -197,6 +210,8 @@ void load_button_click(int mousex, int mousey)
 
 		free(name);
 	}
+
+	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 }
 
 void speed_up_button_click(int mousex, int mousey)
@@ -759,11 +774,11 @@ void keyboard(int keycode)
 int main(int argc, char* argv[])
 {
 	ALLEGRO_DISPLAY *disp;
-	ALLEGRO_EVENT_QUEUE *event_queue;
+
 	ALLEGRO_EVENT event;
 	ALLEGRO_BITMAP *display_bitmap = NULL;
 	ALLEGRO_MOUSE_STATE mstate;
-	ALLEGRO_TIMER *timer = NULL;
+
 	char buffer[1000];
 
 
