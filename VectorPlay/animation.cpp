@@ -75,42 +75,6 @@ Bone::Bone()
 	pos.set_angel_vector(0, 10);
 }
 
-void Frame::sortBones()
-{
-	int a;
-	bool needs_sorting = true;
-	Bone *t;
-
-	printf("%s::%d\n", __FUNCTION__,__LINE__);
-
-	if (!bones)
-	{
-		printf("this is bad no bones where allocated and in sortBones(), failing badly\n");
-		return;
-	}
-
-	printf("%s::%d\n", __FUNCTION__,__LINE__);
-
-	while (needs_sorting)
-	{
-		printf("%s::%d\n", __FUNCTION__,__LINE__);
-
-		needs_sorting = false;
-		for (a = 0; a < boneCount-1; a++)
-		{
-
-			printf("trying to sort bone %d\n",a);
-
-			if (bones[a]->sort>bones[a + 1]->sort)
-			{
-				t = bones[a];
-				bones[a] = bones[a + 1];
-				bones[a + 1] = t;
-				needs_sorting = true;
-			}
-		}
-	}
-}
 
 void Bone::save( FILE *fd )
 {
@@ -287,6 +251,73 @@ Part *Animation::findPart(char *name)
 		}
 	}
 	return NULL;
+}
+
+void Animation::copyBoneProperties()
+{
+	int s = 0, find = 0;
+	int f;
+	Bone **rootbones;
+	Bone **bones;
+
+	rootbones = frames[0]->bones;
+
+	for (f = 0; f < frameCount; f++)
+	{
+		bones = frames[f] -> bones;
+
+		for (s = 0; s < boneCount; s++)
+		{
+			bones[s]->color = rootbones[s]->color;
+			bones[s]->pos.length_min = rootbones[s]->pos.length_min;
+			bones[s]->pos.length_max = rootbones[s]->pos.length_max;
+			bones[s]->part = rootbones[s]->part;
+
+			if (rootbones[s]->connectedTo)
+			{
+				for (find = 0; find < boneCount; find++)
+				{
+					if (strcmp(rootbones[s]->connectedTo, rootbones[find]->name) == 0)
+					{
+						bones[s]->pos.ref = &bones[find]->pos;
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+void Animation::sortBones()
+{
+	int a;
+	bool needs_sorting = true;
+	Bone *t;
+	Bone **rootbones;
+
+	if (!frames) return;
+	if (!frames[0]->bones) return;
+	if (!frames[0]->bones[0]) return;
+	
+	rootbones = frames[0]->bones;
+
+	while (needs_sorting)
+	{
+		needs_sorting = false;
+		for (a = 0; a < boneCount - 1; a++)
+		{
+			if (rootbones[a]->sort>rootbones[a + 1]->sort)
+			{
+				for (int f = 0; f < frameCount; f++)
+				{
+					t = frames[f]->bones[a];
+					frames[f]->bones[a] = frames[f]->bones[a + 1];
+					frames[f]->bones[a + 1] = t;
+				}
+
+				needs_sorting = true;
+			}
+		}
+	}
 }
 
 void Animation::transform_animation(double p, Frame &before, Frame &current, Frame &after)

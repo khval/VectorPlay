@@ -42,7 +42,6 @@ public:
 	int boneCount;
 	Bone **bones;
 
-	void sortBones();
 #ifndef liniar_movement
 	xy control_points[e_bone_count * 2];
 #endif
@@ -67,7 +66,9 @@ class Animation
 	Frame **frames;
 	Frame *final;
 
+	void sortBones();
 	void transform_animation(double p, Frame &before, Frame &current, Frame &after);
+	void copyBoneProperties();
 	Part *findPart(char *name);
 	Animation(int FrameCount, int PartCount, int BoneCount);
 	~Animation();
