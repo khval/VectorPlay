@@ -72,7 +72,7 @@ int picked_vector = -1;
 bool MouseIsDown = false;
 
 extern void BasicFileOpen();
-void copy_bone_data(Bone **rootbones, Bone **currentbones);
+//void copy_bone_data(Bone **rootbones, Bone **currentbones);
 void draw_all_curvs();
 void fix_anim();
 void save_xml(Animation *anim, char *filename);
@@ -86,10 +86,13 @@ Button zoom_in_button(0, 10, &play_button, NULL, 80, 20, "Zoom in");
 Button zoom_out_button(0, 10, &zoom_in_button, NULL, 80, 20, "Zoom out");
 Button speed_down_button(0, 10, &zoom_out_button, NULL, 120, 20, "Speed down");
 Button speed_up_button(0, 10, &speed_down_button, NULL, 120, 20, "Speed up");
-Button timeline_button(0, display_size.y() - 20, NULL, NULL, display_size.x(), 20, "");
+Button timeline_button(10, display_size.y() - 30, NULL, NULL, display_size.x()-20, 20, "");
 Button workspace(10, 0, NULL, &quit_button, 1, 1, "");
 Button *buttons[] = { &quit_button, &play_button, &load_button, &save_button, &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, NULL };
 
+
+void draw_time_line(Button *me);
+void draw_time_frames(Button *me);
 
 void quit_button_click(int mousex, int mousey)
 {
@@ -131,7 +134,12 @@ void play_button_click(int mousex, int mousey)
 
 	if (play)
 	{
+		timeline_button.draw_fn = draw_time_line;
 		prepare_anim();
+	}
+	else
+	{
+		timeline_button.draw_fn = draw_time_frames;
 	}
 }
 
@@ -202,10 +210,8 @@ void load_button_click(int mousex, int mousey)
 				anim->parts[n]->bitmap = sprite_map;
 			}
 
-			if (anim->frames)
-			{
-				copy_bone_data(anim->frames[0]->bones, anim->final->bones);
-			}
+			anim->sortBones();
+			anim->copyBoneProperties();
 		}
 
 		free(name);
@@ -281,12 +287,14 @@ void workspace_draw(Button *me)
 	}
 }
 
-void draw_timeline(Button *me)
+void draw_time_frames(Button *me)
 {
 	int n = 0;
 	double part_x;
 	double _x = 0;
 	double x1, y1, x2, y2;
+
+	al_draw_rectangle(me->x(), me->y(), me->x()+me->width, me->y()+me->height, al_map_rgb(255, 255, 255),1);
 
 	if (anim->frameCount == 0)
 	{
@@ -300,9 +308,9 @@ void draw_timeline(Button *me)
 	else
 	{
 		part_x = me->width / anim->frameCount;
-		_x = part_x;
+		_x = part_x + me->x();
 
-		x1 = selected_frame * part_x;
+		x1 = selected_frame * part_x + me->x();
 		x2 = x1 + part_x;
 		y1 = me->y();
 		y2 = me->y() + me->height;
@@ -315,8 +323,59 @@ void draw_timeline(Button *me)
 			_x += part_x;
 		}
 	}
-
 }
+
+void draw_time_line(Button *me)
+{
+	ALLEGRO_COLOR _color;
+	int n = 0;
+	double part_x;
+	double _x = 0;
+	double _hh = 0;
+	double x1, y1, x2, y2;
+
+	_color = al_map_rgba(255, 255, 255, 255);
+
+	if (anim->frameCount == 0)
+	{
+		x1 = me->x();
+		x2 = me->x() + me->width;
+		y1 = me->y();
+		y2 = me->y() + me->height;
+
+		al_draw_filled_rectangle(x1 + 2, y1 + 2, x2 - 2, y2 - 2, _color );
+	}
+	else
+	{
+		part_x = me->width / anim->frameCount;
+		
+
+		x1 = selected_frame * part_x;
+		x2 = x1 + part_x;
+		y1 = me->y();
+		y2 = me->y() + me->height;
+
+		_hh = y1 + (me->height / 2);
+
+		al_draw_line(
+			me->x(), _hh, 	
+			me->x()+me->width, _hh, _color, 1);
+
+		al_draw_circle(
+			me->x() + x1 + (part_x * delay / 100.0f), _hh - 1, 4, _color, 1);
+
+		_x = me->x();
+		for (n = 0; n < anim->frameCount +1; n++)
+		{
+			al_draw_line(_x, y1, _x, y2, _color, 1);
+
+			al_draw_line(_x + (part_x / 2) , _hh - 3, _x + (part_x / 2), _hh + 3, _color, 1);
+
+			_x += part_x;
+		}
+	}
+}
+
 
 void draw_play(Button *me)
 {
@@ -461,30 +520,7 @@ void printV(xy &pos)
 }
 
 
-void copy_bone_data(Bone **rootbones,Bone **currentbones)
-{
-	int s = 0, find = 0;
 
-	for (s = 0; s < anim->boneCount; s++)
-	{
-		currentbones[s]->color = rootbones[s]->color;
-		currentbones[s]->pos.length_min = rootbones[s]->pos.length_min;
-		currentbones[s]->pos.length_max = rootbones[s]->pos.length_max;
-		currentbones[s]->part = rootbones[s]->part;
-
-		if (rootbones[s]->connectedTo)
-		{
-			for (find = 0; find < anim->boneCount; find++)
-			{
-				if (strcmp(rootbones[s]->connectedTo, rootbones[find]->name) == 0)
-				{
-					currentbones[s]->pos.ref = &currentbones[find]->pos;
-					break;
-				}
-			}
-		}
-	}
-}
 
 void resize_buttons()
 {
@@ -605,7 +641,6 @@ Animation *load_xml( char *filename )
 	if (bonesObj = doc.get_object("bones", 1))
 	{
 		Bone *theBone;
-		int sort;
 
 		rootframe = (bones_count > 0) ? anim->frames[0] : NULL;
 
@@ -738,13 +773,8 @@ void fix_anim()
 		return;
 	}
 
-	anim->frames[0]->sortBones();
-	rootbones = anim->frames[0]->bones;
-
-	for (int selected = 0; selected < anim->frameCount; selected++)
-	{
-		copy_bone_data(rootbones, anim->frames[selected]->bones);
-	}
+	anim->sortBones();
+	anim->copyBoneProperties();
 }
 
 
@@ -833,11 +863,12 @@ int main(int argc, char* argv[])
 		{
 			anim->parts[n]->bitmap = sprite_map;
 		}
-
+		/*
 		if (anim->frames)
 		{
 			copy_bone_data(anim->frames[0]->bones, anim->final->bones);
-		}		
+		}
+		*/
 	}
 
 	resize_buttons();
@@ -848,8 +879,9 @@ int main(int argc, char* argv[])
 	
 	quit_button.click_fn = quit_button_click;
 	timeline_button.click_fn = click_timeline;
+	timeline_button.draw_outline_enable = false;
 	
-	timeline_button.draw_fn = draw_timeline;
+	timeline_button.draw_fn = draw_time_frames;
 	play_button.draw_fn = draw_play;
 
 	zoom_in_button.click_fn = zoom_in_button_click;
