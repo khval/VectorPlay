@@ -21,6 +21,7 @@ class Button
 
 public:
 
+	bool draw_outline_enable;
 	char *text;
 	Button *rel_x;
 	Button *rel_y;

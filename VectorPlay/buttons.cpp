@@ -42,6 +42,7 @@ Button::Button( int _x, int _y, Button *_rel_x, Button *_rel_y, int _width, int 
 
 	click_fn = NULL;
 	draw_fn = NULL;
+	draw_outline_enable = true;
 
 	if (name) 	text = strdup(name);
 }
@@ -64,7 +65,7 @@ void Button::Draw()
 {
 	int sx, sy;
 
-	al_draw_rectangle(x() + 1, y() + 1, x() + width, y() + height, al_map_rgb(255, 255, 255), 1);
+	if (draw_outline_enable) al_draw_rectangle(x() + 1, y() + 1, x() + width, y() + height, al_map_rgb(255, 255, 255), 1);
 
 	if (draw_fn)
 	{
