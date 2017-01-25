@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
+<editor>
+<zoom>0.50</zoom>
+<image>gfx/show.jpg</image>
+</editor>
 <parts>
 <part>
 <name>head</name>
@@ -24,27 +28,27 @@
 </part>
 </parts>
 <bones>
-<bone><name>main</name><connectedTo>none</connectedTo><color>0xFFFFFFFF</color><min>0.00</min><max>0.00</max><part>none</part></bone>
-<bone><name>left lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>right lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>left leg</name><connectedTo>left lår</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>right leg</name><connectedTo>right lår</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>left feet</name><connectedTo>left leg</connectedTo><color>0xFFFFFFFF</color><min>25.00</min><max>25.00</max><part>feet</part></bone>
-<bone><name>right feet</name><connectedTo>right leg</connectedTo><color>0xFFFFFFFF</color><min>25.00</min><max>25.00</max><part>feet</part></bone>
-<bone><name>body</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>neck</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>none</part></bone>
-<bone><name>head</name><connectedTo>neck</connectedTo><color>0xFFFFFFFF</color><min>70.00</min><max>70.00</max><part>head</part></bone>
-<bone><name>left top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>right top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>left arm</name><connectedTo>left top arm</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>right arm</name><connectedTo>right top arm</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
-<bone><name>left hand</name><connectedTo>left arm</connectedTo><color>0xFFFFFFFF</color><min>25.00</min><max>25.00</max><part>none</part></bone>
-<bone><name>right hand</name><connectedTo>right arm</connectedTo><color>0xFFFFFFFF</color><min>25.00</min><max>25.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>main</name><connectedTo>none</connectedTo><color>0xFFFFFFFF</color><min>0.00</min><max>0.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>left lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>right lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>left leg</name><connectedTo>left lår</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>right leg</name><connectedTo>right lår</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>left feet</name><connectedTo>left leg</connectedTo><color>0xFFFFFFFF</color><min>25.00</min><max>25.00</max><part>feet</part></bone>
+<bone><sort>0</sort><name>right feet</name><connectedTo>right leg</connectedTo><color>0xFFFFFFFF</color><min>25.00</min><max>25.00</max><part>feet</part></bone>
+<bone><sort>0</sort><name>body</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>neck</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>head</name><connectedTo>neck</connectedTo><color>0xFFFFFFFF</color><min>70.00</min><max>70.00</max><part>head</part></bone>
+<bone><sort>0</sort><name>left top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>right top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>left arm</name><connectedTo>left top arm</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>right arm</name><connectedTo>right top arm</connectedTo><color>0xFFFFFFFF</color><min>100.00</min><max>100.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>left hand</name><connectedTo>left arm</connectedTo><color>0xFFFFFFFF</color><min>25.00</min><max>25.00</max><part>none</part></bone>
+<bone><sort>0</sort><name>right hand</name><connectedTo>right arm</connectedTo><color>0xFFFFFFFF</color><min>25.00</min><max>25.00</max><part>none</part></bone>
 </bones>
 <frames>
 <frame>
 <bones>
-<bone><x>408.00</x><y>283.00</y></bone>
+<bone><x>-4.00</x><y>-16.00</y></bone>
 <bone><x>-2.80</x><y>99.96</y></bone>
 <bone><x>60.92</x><y>79.30</y></bone>
 <bone><x>-84.00</x><y>54.26</y></bone>
@@ -64,7 +68,7 @@
 </frame>
 <frame>
 <bones>
-<bone><x>408.00</x><y>283.00</y></bone>
+<bone><x>24.00</x><y>-44.00</y></bone>
 <bone><x>-56.97</x><y>82.19</y></bone>
 <bone><x>99.13</x><y>13.16</y></bone>
 <bone><x>-47.39</x><y>88.06</y></bone>

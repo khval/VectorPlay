@@ -2,6 +2,7 @@
 <main>
 <editor>
 <zoom>4.00</zoom>
+<image>gfx/player.png</image>
 </editor>
 <parts>
 <part>
@@ -90,62 +91,62 @@
 </part>
 </parts>
 <bones>
+<bone><sort>-2</sort><name>left lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>venstre lår</part></bone>
+<bone><sort>-2</sort><name>left leg</name><connectedTo>left lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>venstre leg</part></bone>
+<bone><sort>-2</sort><name>left feet</name><connectedTo>left leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
+<bone><sort>-2</sort><name>left top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>venstre arm top</part></bone>
+<bone><sort>-2</sort><name>left arm</name><connectedTo>left top arm</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>venstre arm bottom</part></bone>
+<bone><sort>-2</sort><name>left hand</name><connectedTo>left arm</connectedTo><color>0xFFFFFFFF</color><min>4.00</min><max>4.00</max><part>hand</part></bone>
 <bone><sort>0</sort><name>main</name><connectedTo>none</connectedTo><color>0xFFFFFFFF</color><min>0.00</min><max>0.00</max><part>none</part></bone>
-<bone><sort>0</sort><name>left lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>venstre lår</part></bone>
 <bone><sort>0</sort><name>right lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>høyre lår</part></bone>
-<bone><sort>0</sort><name>left leg</name><connectedTo>left lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>venstre leg</part></bone>
 <bone><sort>0</sort><name>right leg</name><connectedTo>right lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>høyre leg</part></bone>
-<bone><sort>0</sort><name>left feet</name><connectedTo>left leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
 <bone><sort>0</sort><name>right feet</name><connectedTo>right leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
 <bone><sort>0</sort><name>body</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>21.00</min><max>21.00</max><part>body</part></bone>
 <bone><sort>0</sort><name>neck</name><connectedTo>body</connectedTo><color>0xFF000000</color><min>4.00</min><max>4.00</max><part>none</part></bone>
 <bone><sort>0</sort><name>head</name><connectedTo>neck</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>head</part></bone>
-<bone><sort>0</sort><name>left top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>venstre arm top</part></bone>
 <bone><sort>0</sort><name>right top arm</name><connectedTo>body</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>høyre arm top</part></bone>
-<bone><sort>0</sort><name>left arm</name><connectedTo>left top arm</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>venstre arm bottom</part></bone>
 <bone><sort>0</sort><name>right arm</name><connectedTo>right top arm</connectedTo><color>0xFFFFFFFF</color><min>10.00</min><max>10.00</max><part>høyre arm bottom</part></bone>
-<bone><sort>0</sort><name>left hand</name><connectedTo>left arm</connectedTo><color>0xFFFFFFFF</color><min>4.00</min><max>4.00</max><part>hand</part></bone>
 <bone><sort>0</sort><name>right hand</name><connectedTo>right arm</connectedTo><color>0xFFFFFFFF</color><min>4.00</min><max>4.00</max><part>hand</part></bone>
 </bones>
 <frames>
 <frame>
 <bones>
-<bone><x>0.00</x><y>0.00</y></bone>
-<bone><x>-2.34</x><y>14.82</y></bone>
-<bone><x>9.00</x><y>12.00</y></bone>
-<bone><x>-5.61</x><y>8.28</y></bone>
-<bone><x>-3.48</x><y>10.44</y></bone>
-<bone><x>-3.16</x><y>3.87</y></bone>
-<bone><x>-3.17</x><y>3.87</y></bone>
-<bone><x>1.05</x><y>-20.97</y></bone>
-<bone><x>-0.00</x><y>-4.00</y></bone>
+<bone><x>14.01</x><y>5.36</y></bone>
+<bone><x>-10.15</x><y>4.24</y></bone>
+<bone><x>-4.63</x><y>1.89</y></bone>
+<bone><x>-3.73</x><y>9.28</y></bone>
+<bone><x>7.79</x><y>6.27</y></bone>
+<bone><x>1.78</x><y>-3.58</y></bone>
+<bone><x>-11.25</x><y>-3.50</y></bone>
+<bone><x>14.74</x><y>2.76</y></bone>
+<bone><x>-1.61</x><y>10.88</y></bone>
+<bone><x>0.27</x><y>4.99</y></bone>
+<bone><x>19.60</x><y>-7.54</y></bone>
+<bone><x>2.40</x><y>-3.20</y></bone>
 <bone><x>0.97</x><y>-9.95</y></bone>
-<bone><x>9.58</x><y>-2.87</y></bone>
-<bone><x>-8.94</x><y>-4.47</y></bone>
-<bone><x>6.78</x><y>-7.35</y></bone>
-<bone><x>-2.14</x><y>-9.77</y></bone>
-<bone><x>-1.99</x><y>-3.47</y></bone>
-<bone><x>-3.23</x><y>-2.36</y></bone>
+<bone><x>-7.25</x><y>6.89</y></bone>
+<bone><x>-0.95</x><y>9.95</y></bone>
+<bone><x>3.20</x><y>-2.40</y></bone>
 </bones>
 </frame>
 <frame>
 <bones>
-<bone><x>0.00</x><y>0.00</y></bone>
-<bone><x>-5.57</x><y>13.93</y></bone>
-<bone><x>13.60</x><y>6.33</y></bone>
-<bone><x>-10.99</x><y>0.48</y></bone>
-<bone><x>5.50</x><y>9.52</y></bone>
-<bone><x>-4.97</x><y>0.50</y></bone>
-<bone><x>2.68</x><y>4.22</y></bone>
-<bone><x>0.95</x><y>-20.98</y></bone>
-<bone><x>-1.58</x><y>-3.68</y></bone>
-<bone><x>-5.61</x><y>-8.28</y></bone>
-<bone><x>9.88</x><y>-1.52</y></bone>
-<bone><x>-9.78</x><y>2.10</y></bone>
-<bone><x>8.23</x><y>-5.68</y></bone>
-<bone><x>-5.91</x><y>-8.06</y></bone>
+<bone><x>0.21</x><y>15.00</y></bone>
+<bone><x>-5.62</x><y>9.46</y></bone>
+<bone><x>-1.09</x><y>4.88</y></bone>
+<bone><x>2.94</x><y>9.56</y></bone>
+<bone><x>3.52</x><y>9.36</y></bone>
 <bone><x>2.24</x><y>-3.31</y></bone>
-<bone><x>-2.43</x><y>-3.18</y></bone>
+<bone><x>0.00</x><y>0.00</y></bone>
+<bone><x>5.32</x><y>14.02</y></bone>
+<bone><x>-1.35</x><y>10.92</y></bone>
+<bone><x>-1.26</x><y>4.84</y></bone>
+<bone><x>0.95</x><y>-20.98</y></bone>
+<bone><x>0.20</x><y>-4.00</y></bone>
+<bone><x>-0.13</x><y>-10.00</y></bone>
+<bone><x>-1.34</x><y>9.91</y></bone>
+<bone><x>0.16</x><y>10.00</y></bone>
+<bone><x>3.56</x><y>-1.82</y></bone>
 </bones>
 </frame>
 </frames>
