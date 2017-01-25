@@ -74,9 +74,11 @@ bool MouseIsDown = false;
 extern void BasicFileOpen();
 //void copy_bone_data(Bone **rootbones, Bone **currentbones);
 void draw_all_curvs();
-void fix_anim();
+void load_spritemap();
 void save_xml(Animation *anim, char *filename);
 Animation *load_xml(char *filename);
+
+char *imagename = NULL;
 
 Button quit_button(10, 10, NULL, NULL, 50, 20, "Quit");
 Button load_button(0, 10, &quit_button, NULL, 50, 20, "Load");
@@ -93,6 +95,7 @@ Button *buttons[] = { &quit_button, &play_button, &load_button, &save_button, &t
 
 void draw_time_line(Button *me);
 void draw_time_frames(Button *me);
+
 
 void quit_button_click(int mousex, int mousey)
 {
@@ -203,13 +206,9 @@ void load_button_click(int mousex, int mousey)
 		}
 		else
 		{
-			fix_anim();
+			load_spritemap();
 
-			for (int n = 0; n < anim->partCount; n++)
-			{
-				anim->parts[n]->bitmap = sprite_map;
-			}
-
+			anim->setBitmap(sprite_map);
 			anim->sortBones();
 			anim->copyBoneProperties();
 		}
@@ -568,6 +567,7 @@ Animation *load_xml( char *filename )
 	SimpleXML *partsObj;
 	SimpleXML *part;
 	Frame *rootframe;
+	char *tmpname;
 
 	unsigned int argb;
 
@@ -581,7 +581,17 @@ Animation *load_xml( char *filename )
 
 	if (EditorObj = doc.get_object("editor", 1))
 	{
+		char *temp_name;
+
 		zoom = EditorObj->get_double_value("zoom");
+		temp_name = EditorObj->get_str_value("image");
+
+		if (temp_name)
+		{
+			if (imagename) free(imagename);
+			imagename = temp_name;
+		}
+
 		delete EditorObj;
 	}
 
@@ -717,6 +727,7 @@ void save_xml(Animation *anim, char *filename)
 
 		fprintf(fd, "<editor>\n");
 		fprintf(fd, "<zoom>%0.2lf</zoom>\n", zoom);
+		fprintf(fd, "<image>%s</image>\n", imagename ? imagename : "none");
 		fprintf(fd, "</editor>\n");
 
 		fprintf(fd, "<parts>\n");
@@ -755,29 +766,6 @@ void save_xml(Animation *anim, char *filename)
 
 }
 
-void fix_anim()
-{
-	Frame *frame;
-	Bone **rootbones;
-	int found = 0;
-
-	if (!anim -> frames)
-	{
-		printf("frames is NULL\n");
-		return;
-	}
-
-	if (!anim -> frames[0])
-	{
-		printf("frame 0 has no object\n");
-		return;
-	}
-
-	anim->sortBones();
-	anim->copyBoneProperties();
-}
-
-
 void keyboard(int keycode)
 {
 	int frame = selected_frame;
@@ -798,6 +786,22 @@ void keyboard(int keycode)
 			anim->frames[frame]->bones[bone]->pos.ref = ref;
 		}
 
+	}
+}
+
+void load_spritemap()
+{
+	if (imagename)
+	{
+		ALLEGRO_BITMAP *tmp;
+
+		tmp = al_load_bitmap(imagename);
+
+		if (tmp)
+		{
+			if (sprite_map) al_destroy_bitmap(sprite_map);
+			sprite_map = tmp;
+		}
 	}
 }
 
@@ -845,8 +849,6 @@ int main(int argc, char* argv[])
 
 	}
 
-	sprite_map = al_load_bitmap("gfx/player.png");
-
 	origo = display_size / 2;
 
 	anim = load_xml("anim.xml");
@@ -854,21 +856,16 @@ int main(int argc, char* argv[])
 	if (!anim)
 	{
 		anim = new Animation(0, 0, 0);
+		load_spritemap();
 	}
 	else
 	{
-		fix_anim();
+		load_spritemap();
 
-		for (int n = 0; n < anim->partCount; n++)
-		{
-			anim->parts[n]->bitmap = sprite_map;
-		}
-		/*
-		if (anim->frames)
-		{
-			copy_bone_data(anim->frames[0]->bones, anim->final->bones);
-		}
-		*/
+		anim->setBitmap(sprite_map);
+		anim->sortBones();
+		anim->copyBoneProperties();
+
 	}
 
 	resize_buttons();

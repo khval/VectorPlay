@@ -253,6 +253,32 @@ Part *Animation::findPart(char *name)
 	return NULL;
 }
 
+void Animation::__fix_bone_references(Bone **rootbones, Bone **bones)
+{
+	int s, find;
+
+	for (s = 0; s < boneCount; s++)
+	{
+		bones[s]->color = rootbones[s]->color;
+		bones[s]->pos.length_min = rootbones[s]->pos.length_min;
+		bones[s]->pos.length_max = rootbones[s]->pos.length_max;
+		bones[s]->part = rootbones[s]->part;
+
+		if (rootbones[s]->connectedTo)
+		{
+			for (find = 0; find < boneCount; find++)
+			{
+				if (strcmp(rootbones[s]->connectedTo, rootbones[find]->name) == 0)
+				{
+					bones[s]->pos.ref = &bones[find]->pos;
+					break;
+				}
+			}
+		}
+	}
+
+}
+
 void Animation::copyBoneProperties()
 {
 	int s = 0, find = 0;
@@ -264,28 +290,11 @@ void Animation::copyBoneProperties()
 
 	for (f = 0; f < frameCount; f++)
 	{
-		bones = frames[f] -> bones;
-
-		for (s = 0; s < boneCount; s++)
-		{
-			bones[s]->color = rootbones[s]->color;
-			bones[s]->pos.length_min = rootbones[s]->pos.length_min;
-			bones[s]->pos.length_max = rootbones[s]->pos.length_max;
-			bones[s]->part = rootbones[s]->part;
-
-			if (rootbones[s]->connectedTo)
-			{
-				for (find = 0; find < boneCount; find++)
-				{
-					if (strcmp(rootbones[s]->connectedTo, rootbones[find]->name) == 0)
-					{
-						bones[s]->pos.ref = &bones[find]->pos;
-						break;
-					}
-				}
-			}
-		}
+		__fix_bone_references(rootbones, frames[f]->bones);
 	}
+
+	__fix_bone_references(rootbones, final->bones);
+
 }
 void Animation::sortBones()
 {
@@ -376,6 +385,14 @@ Animation::Animation(int FrameCount, int PartCount, int BoneCount)
 	partCount = PartCount;
 	boneCount = BoneCount;
 	frameCount = FrameCount;
+}
+
+void Animation::setBitmap(ALLEGRO_BITMAP *bm)
+{
+	for (int n = 0; n < partCount; n++)
+	{
+		parts[n]->bitmap = bm;
+	}
 }
 
 Animation::~Animation()
