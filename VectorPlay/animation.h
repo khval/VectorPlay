@@ -58,6 +58,9 @@ public:
 
 class Animation
 {
+	private: 
+		void Animation::__fix_bone_references(Bone **rootbones, Bone **bones);
+
 	public:
 	int frameCount;
 	int boneCount;
@@ -66,6 +69,7 @@ class Animation
 	Frame **frames;
 	Frame *final;
 
+	void setBitmap(ALLEGRO_BITMAP *bm);
 	void sortBones();
 	void transform_animation(double p, Frame &before, Frame &current, Frame &after);
 	void copyBoneProperties();
