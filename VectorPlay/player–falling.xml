@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
+<editor>
+</editor>
 <parts>
 <part>
 <name>head</name>
@@ -88,11 +90,11 @@
 </parts>
 <bones>
 <bone><name>main</name><connectedTo>none</connectedTo><color>0xFFFFFFFF</color><min>0.00</min><max>0.00</max><part>none</part></bone>
-<bone><name>left lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>venstre lår</part></bone>
+<bone><sort>-2</sort><name>left lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>venstre lår</part></bone>
 <bone><name>right lår</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>15.00</min><max>15.00</max><part>høyre lår</part></bone>
-<bone><name>left leg</name><connectedTo>left lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>venstre leg</part></bone>
+<bone><sort>-2</sort><name>left leg</name><connectedTo>left lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>venstre leg</part></bone>
 <bone><name>right leg</name><connectedTo>right lår</connectedTo><color>0xFFFFFFFF</color><min>11.00</min><max>11.00</max><part>høyre leg</part></bone>
-<bone><name>left feet</name><connectedTo>left leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
+<bone><sort>-2</sort><name>left feet</name><connectedTo>left leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
 <bone><name>right feet</name><connectedTo>right leg</connectedTo><color>0xFFFFFFFF</color><min>5.00</min><max>5.00</max><part>feet</part></bone>
 <bone><name>body</name><connectedTo>main</connectedTo><color>0xFFFFFFFF</color><min>21.00</min><max>21.00</max><part>body</part></bone>
 <bone><name>neck</name><connectedTo>body</connectedTo><color>0xFF000000</color><min>4.00</min><max>4.00</max><part>none</part></bone>

@@ -1,13 +1,14 @@
-﻿Build started 20.01.2017 23:54:37.
+﻿Build started 27.01.2017 21:43:10.
      1>Project "D:\Amiga\GIT\VectorPLay\VectorPlay\VectorPlay\VectorPlay.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(381,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (SpriteEditor.vcxproj, SpriteEditor2.vcxproj, VectorPlay.vcxproj).  This can lead to incorrect clean and rebuild behavior.
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ID:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\include\ /ID:\Amiga\GIT\VectorPLay\VectorPlay\packages\AllegroDeps.1.4.0.0\build\native\\include\ /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D windows /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt VectorPlay.cpp
-         VectorPlay.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ID:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\include\ /ID:\Amiga\GIT\VectorPLay\VectorPlay\packages\AllegroDeps.1.4.0.0\build\native\\include\ /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D windows /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt animation.cpp
+         animation.cpp
      1>d:\amiga\git\vectorplay\vectorplay\vectorplay\main_windows.h(21): warning C4005: 'windows' : macro redefinition
                  command-line arguments :  see previous definition of 'windows'
-     1>d:\amiga\git\vectorplay\vectorplay\vectorplay\vectorplay.cpp(639): warning C4101: 'sort' : unreferenced local variable
-     1>d:\amiga\git\vectorplay\vectorplay\vectorplay\vectorplay.cpp(727): warning C4101: 'frame' : unreferenced local variable
+     1>d:\amiga\git\vectorplay\vectorplay\vectorplay\animation.cpp(106): warning C4101: 'y' : unreferenced local variable
+     1>d:\amiga\git\vectorplay\vectorplay\vectorplay\animation.cpp(106): warning C4101: 'x' : unreferenced local variable
+     1>d:\amiga\git\vectorplay\vectorplay\vectorplay\animation.cpp(287): warning C4101: 'bones' : unreferenced local variable
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Amiga\GIT\VectorPLay\VectorPlay\Debug\VectorPlay2.exe" /INCREMENTAL /NOLOGO D:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\v120\Win32\lib\allegro.lib D:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\v120\Win32\lib\allegro_main.lib D:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\v120\Win32\lib\allegro_image.lib D:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\v120\Win32\lib\allegro_color.lib D:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\v120\Win32\lib\allegro_font.lib D:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\v120\Win32\lib\allegro_ttf.lib D:\Amiga\GIT\VectorPLay\VectorPlay\packages\Allegro.5.2.1.1\build\native\v120\Win32\lib\allegro_primitives.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Amiga\GIT\VectorPLay\VectorPlay\Debug\VectorPlay2.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Amiga\GIT\VectorPLay\VectorPlay\Debug\VectorPlay2.lib" /MACHINE:X86 Debug\animation.obj
          Debug\buttons.obj
@@ -15,6 +16,7 @@
          Debug\intersect.obj
          Debug\SelectFileWindows.obj
          Debug\SimpleXML.obj
+         Debug\stdafx.obj
          Debug\VectorPlay.obj
          Debug\vector.obj
          VectorPlay.vcxproj -> D:\Amiga\GIT\VectorPLay\VectorPlay\Debug\VectorPlay2.exe
@@ -22,4 +24,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.95
+Time Elapsed 00:00:01.14

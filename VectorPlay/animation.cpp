@@ -286,6 +286,8 @@ void Animation::copyBoneProperties()
 	Bone **rootbones;
 	Bone **bones;
 
+	if (boneCount == 0) return;
+
 	rootbones = frames[0]->bones;
 
 	for (f = 0; f < frameCount; f++)
