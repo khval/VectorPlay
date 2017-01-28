@@ -71,6 +71,7 @@ class Animation
 
 	void setBitmap(ALLEGRO_BITMAP *bm);
 	void sortBones();
+	void limit();
 	void transform_animation(double p, Frame &before, Frame &current, Frame &after);
 	void copyBoneProperties();
 	Part *findPart(char *name);

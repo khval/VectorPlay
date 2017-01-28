@@ -331,6 +331,20 @@ void Animation::sortBones()
 	}
 }
 
+void Animation::limit()
+{
+	int f,b;
+
+	for (f = 0; f < frameCount; f++)
+	{
+		for (b = 0; b < boneCount; b++)
+		{
+			frames[f]->bones[b]->pos.limit();
+		}		
+	}
+}
+
+
 void Animation::transform_animation(double p, Frame &before, Frame &current, Frame &after)
 {
 	int n = 0;
