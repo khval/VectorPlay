@@ -88,9 +88,10 @@ Button zoom_in_button(0, 10, &play_button, NULL, 80, 20, "Zoom in");
 Button zoom_out_button(0, 10, &zoom_in_button, NULL, 80, 20, "Zoom out");
 Button speed_down_button(0, 10, &zoom_out_button, NULL, 120, 20, "Speed down");
 Button speed_up_button(0, 10, &speed_down_button, NULL, 120, 20, "Speed up");
+Button center_button(0, 10, &speed_up_button, NULL, 120, 20, "Center");
 Button timeline_button(10, display_size.y() - 30, NULL, NULL, display_size.x()-20, 20, "");
 Button workspace(10, 0, NULL, &quit_button, 1, 1, "");
-Button *buttons[] = { &quit_button, &play_button, &load_button, &save_button, &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, NULL };
+Button *buttons[] = { &quit_button, &play_button, &load_button, &save_button, &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, &center_button, NULL };
 
 
 void draw_time_line(Button *me);
@@ -167,6 +168,23 @@ void speed_down_button_click(int mousex, int mousey)
 	if (speed < (1.0f / 4.0f)) speed = 1.0f / 2.0f;
 }
 
+void center_button_click(int mousex, int mousey)
+{
+	int n, b;
+
+	for (n = 0; n < anim->frameCount; n++)
+	{
+		for (b = 0; b < anim->boneCount; b++)
+		{
+			if (anim->frames[n]->bones[b]->pos.ref == NULL)
+			{
+				anim->frames[n]->bones[b]->pos.rel_x = 0;
+				anim->frames[n]->bones[b]->pos.rel_y = 0;
+			}
+		}
+	}
+}
+
 void save_button_click(int mousex, int mousey)
 {
 	int error_code;
@@ -211,6 +229,7 @@ void load_button_click(int mousex, int mousey)
 			anim->setBitmap(sprite_map);
 			anim->sortBones();
 			anim->copyBoneProperties();
+			anim->limit();
 		}
 
 		free(name);
@@ -585,6 +604,7 @@ Animation *load_xml( char *filename )
 
 		zoom = EditorObj->get_double_value("zoom");
 		temp_name = EditorObj->get_str_value("image");
+		delay = EditorObj->get_int_value("speed");
 
 		if (temp_name)
 		{
@@ -728,6 +748,7 @@ void save_xml(Animation *anim, char *filename)
 		fprintf(fd, "<editor>\n");
 		fprintf(fd, "<zoom>%0.2lf</zoom>\n", zoom);
 		fprintf(fd, "<image>%s</image>\n", imagename ? imagename : "none");
+		fprintf(fd, "<speed>%d</speed>\n", delay);
 		fprintf(fd, "</editor>\n");
 
 		fprintf(fd, "<parts>\n");
@@ -869,8 +890,7 @@ int main(int argc, char* argv[])
 	}
 
 	resize_buttons();
-
-
+	
 	load_button.click_fn = load_button_click;
 	save_button.click_fn = save_button_click;
 	
@@ -886,8 +906,10 @@ int main(int argc, char* argv[])
 	play_button.click_fn = play_button_click;
 	speed_down_button.click_fn = speed_down_button_click;
 	speed_up_button.click_fn = speed_up_button_click;
-	workspace.click_fn = workspace_click;
 
+	center_button.click_fn = center_button_click;
+
+	workspace.click_fn = workspace_click;
 	workspace.draw_fn = workspace_draw;
 	workspace.width = display_size.x() - (workspace.x() * 2);
 	workspace.height =  timeline_button.y() - 10 - workspace.y() ;
