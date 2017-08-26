@@ -46,9 +46,10 @@ bool quit = false;
 bool play = false;
 bool display_mode = false;
 
-xy display_size(800,600);
+xy display_size(1920,1020);
 xy mousePos;
 xy origo;
+xy him;
 
 ALLEGRO_EVENT_QUEUE *event_queue;
 ALLEGRO_TIMER *timer = NULL;
@@ -84,19 +85,29 @@ Button quit_button(10, 10, NULL, NULL, 50, 20, "Quit");
 Button load_button(0, 10, &quit_button, NULL, 50, 20, "Load");
 Button save_button(0, 10, &load_button, NULL, 50, 20, "Save");
 Button play_button(0, 10, &save_button, NULL, 50, 20, "Play");
-Button zoom_in_button(0, 10, &play_button, NULL, 80, 20, "Zoom in");
+
+Button viewmode_button(0, 10, &play_button, NULL, 80, 20, "view mode");
+Button zoom_in_button(0, 10, &viewmode_button, NULL, 80, 20, "Zoom in");
 Button zoom_out_button(0, 10, &zoom_in_button, NULL, 80, 20, "Zoom out");
 Button speed_down_button(0, 10, &zoom_out_button, NULL, 120, 20, "Speed down");
 Button speed_up_button(0, 10, &speed_down_button, NULL, 120, 20, "Speed up");
 Button center_button(0, 10, &speed_up_button, NULL, 120, 20, "Center");
+
+
 Button timeline_button(10, display_size.y() - 30, NULL, NULL, display_size.x()-20, 20, "");
 Button workspace(10, 0, NULL, &quit_button, 1, 1, "");
-Button *buttons[] = { &quit_button, &play_button, &load_button, &save_button, &timeline_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, &center_button, NULL };
+Button *buttons[] = { &quit_button, &play_button, &load_button, &save_button, &timeline_button, &viewmode_button, &zoom_in_button, &zoom_out_button, &speed_down_button, &speed_up_button, &workspace, &center_button, NULL };
 
 
 void draw_time_line(Button *me);
 void draw_time_frames(Button *me);
 
+int viewmode = 0;
+
+void viewmode_button_click(int mousex, int mousey)
+{
+	viewmode = (viewmode + 1) % 2;
+}
 
 void quit_button_click(int mousex, int mousey)
 {
@@ -138,6 +149,9 @@ void play_button_click(int mousex, int mousey)
 
 	if (play)
 	{
+		him.rel_x = 0;
+		him.rel_y = 0;
+
 		timeline_button.draw_fn = draw_time_line;
 		prepare_anim();
 	}
@@ -158,14 +172,14 @@ void zoom_out_button_click(int mousex, int mousey)
 {
 	zoom /= 2;
 
-	if (zoom < (1.0f / 4.0f)) zoom = (1.0f / 4.0f);
+	if (zoom < (1.0f / 8.0f)) zoom = (1.0f / 8.0f);
 }
 
 void speed_down_button_click(int mousex, int mousey)
 {
 	speed /= 2.0f;
 
-	if (speed < (1.0f / 4.0f)) speed = 1.0f / 2.0f;
+	if (speed < (1.0f / 8.0f)) speed = 1.0f / 8.0f;
 }
 
 void center_button_click(int mousex, int mousey)
@@ -258,12 +272,24 @@ void workspace_click(int mousex, int mousey)
 	}
 }
 
+Bone *last_low_bone = NULL;
+xy last_low_bone_xy = {0,0};
+xy speed_xy;
+xy feet_down;
+xy new_rootbone_pos;
+
+
 void workspace_draw(Button *me)
 {
+	double x, y;
+	double lx, ly;
+
 	if (play) 
 	{
 		int last_selected_frame;
 		int next_selected_frame;
+		Bone *bone;
+		Bone *rootbone;
 
 		last_selected_frame = selected_frame - 1 < 0 ? anim->frameCount - 1 : selected_frame - 1;
 		next_selected_frame = selected_frame + 1 >= anim->frameCount ? selected_frame + 1 - anim->frameCount : selected_frame + 1;
@@ -273,8 +299,49 @@ void workspace_draw(Button *me)
 			anim->transform_animation((double)delay / 100.0f, *anim->frames[last_selected_frame], *anim->frames[selected_frame], *anim->frames[next_selected_frame]);
 		}
 
-		draw_all_curvs();
+//		draw_all_curvs();
+
+		y = 0;
+
+		if (bone = anim->final->find_low_bone())
+		{
+			rootbone = anim->final->find_zero_bone();
+
+			rootbone->pos = { 0, 0 };
+
+//			al_draw_filled_rectangle( 10,10,20,20, al_map_rgba(255, 0, 0, 255));
+
+			speed_xy.rel_x = 0;
+			speed_xy.rel_y = 0;
+
+			if (bone != last_low_bone)
+			{
+				him += (bone->pos - feet_down);
+
+				// feet is down.
+				feet_down = bone->pos;				
+			}
+
+//			if (bone == last_low_bone)
+			{
+				new_rootbone_pos = (bone->pos - feet_down) - bone -> pos;
+			}
+
+
+			last_low_bone = bone;
+			last_low_bone_xy = bone->pos;
+
+			rootbone->pos = new_rootbone_pos + him;
+		}
+
+//		anim->rootbone;
+
+		x = feet_down.x() * zoom;
+		y = feet_down.y() * zoom;
+
 		anim->final->draw(al_map_rgb(255, 0, 255));
+		al_draw_filled_rectangle(display_size.x() / 2 + x - 5, display_size.y() / 2 + y - 5, display_size.x() / 2 + x + 5, display_size.y() / 2 + y + 1, al_map_rgba(255, 0, 0, 255));
+//		al_draw_filled_rectangle(display_size.x() / 2 + lx - 5, display_size.y() / 2 + ly - 5, display_size.x() / 2 + lx + 5, display_size.y() / 2 + ly + 1, al_map_rgba(0, 0, 255, 255));
 	}
 	else
 	{
@@ -542,6 +609,8 @@ void printV(xy &pos)
 
 void resize_buttons()
 {
+	int n = 0;
+
 	if (font)
 	{
 		int bx, by;
@@ -551,6 +620,9 @@ void resize_buttons()
 
 		for (Button **button = buttons; *button != NULL; button++)
 		{
+			(*button)->number = n++;
+
+
 			if ((*button)->text)
 			{
 				if (strlen((*button)->text) > 0)
@@ -728,7 +800,7 @@ Animation *load_xml( char *filename )
 		delete framesObj;
 	}
 
-	if (zoom < (1.0f / 4.0f)) zoom = (1.0f / 4.0f);
+	if (zoom < (1.0f / 8.0f)) zoom = (1.0f / 8.0f);
 
 	return anim;
 }
@@ -848,7 +920,7 @@ int main(int argc, char* argv[])
 	disp = al_create_display(display_size.x(), display_size.y());
 	event_queue = al_create_event_queue();
 
-	timer = al_create_timer(1.0f/50.0f);
+	timer = al_create_timer(1.0f/60.0f);
 
 	if (disp)
 	{
@@ -901,6 +973,9 @@ int main(int argc, char* argv[])
 	timeline_button.draw_fn = draw_time_frames;
 	play_button.draw_fn = draw_play;
 
+
+	viewmode_button.click_fn = viewmode_button_click;
+
 	zoom_in_button.click_fn = zoom_in_button_click;
 	zoom_out_button.click_fn = zoom_out_button_click;
 	play_button.click_fn = play_button_click;
@@ -943,7 +1018,10 @@ int main(int argc, char* argv[])
 
 			if (event.type == ALLEGRO_EVENT_TIMER)
 			{
-				al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 350, 50, 0, "%0.2lf - %0.2lf - %0.2lf", origo.x(), origo.y(), zoom);
+//				al_draw_textf(font, al_map_rgba(255, 255, 255, 255), 350, 50, 0, "%0.2lf - %0.2lf - %0.2lf", origo.x(), origo.y(), zoom);
+
+				al_draw_textf(font, al_map_rgb(255, 255, 255), 800, 50, 0, "%i, %i  ", mstate.x, mstate.y, mstate.buttons );
+					
 
 				if (font)
 				{

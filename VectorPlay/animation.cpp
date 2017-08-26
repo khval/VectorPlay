@@ -36,6 +36,8 @@ extern double zoom;
 extern xy origo;
 #endif
 
+extern int viewmode;
+
 void Part::save(FILE *fd)
 {
 
@@ -103,10 +105,9 @@ void Bone::save_pos(FILE *fd)
 
 void Bone::draw( )
 {
-	double x, y;
 	if (pos.ref)
 	{
-		if ((part) && (part -> bitmap))
+		if ((part) && (part->bitmap) && (viewmode == 0))
 		{
 
 #ifdef editor
@@ -206,6 +207,40 @@ int Frame::get_picked_vector(double x, double y)
 }
 
 
+Bone *Frame::find_low_bone()
+{
+	int n;
+	double yfound = -1000.0f;
+	Bone *found = NULL;
+
+	for (n = 0; n < boneCount; n++)
+	{
+		if (bones[n]->pos.y()>yfound)
+		{
+			yfound = bones[n]->pos.y();
+			found = bones[n];
+		}
+	}
+
+	return found;
+}
+
+
+Bone *Frame::find_zero_bone()
+{
+	int n;
+
+	for (n = 0; n < boneCount; n++)
+	{
+		if (bones[n]->pos.ref == NULL)
+		{
+			return bones[n];
+		}
+	}
+
+	return NULL;
+}
+
 #define bein_lengde 70
 
 void Frame::init(double x, double y)
@@ -253,6 +288,7 @@ Part *Animation::findPart(char *name)
 	return NULL;
 }
 
+
 void Animation::__fix_bone_references(Bone **rootbones, Bone **bones)
 {
 	int s, find;
@@ -284,7 +320,7 @@ void Animation::copyBoneProperties()
 	int s = 0, find = 0;
 	int f;
 	Bone **rootbones;
-	Bone **bones;
+//	Bone **bones;
 
 	if (boneCount == 0) return;
 
