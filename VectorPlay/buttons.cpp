@@ -25,6 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include <stdio.h>
 #include "buttons.h"
 #include "string.h"
+#include "debug.h"
 
 using namespace std;
 
@@ -92,6 +93,9 @@ bool Button::Event( int event, int mousex,int mousey )
 
 	if ((mousex > _x ) && (mousex < _x + width )&& (mousey > _y) && (mousey < _y + height))
 	{
+
+		DPrintF("debug %d   %d,%d,%d --- %d\n", event, number, mousex, mousey, _y + height);
+
 		switch (event)
 		{
 			case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:

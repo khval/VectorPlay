@@ -28,6 +28,7 @@ public:
 
 	int width;
 	int height;
+	int number;
 
 	Button( int x, int y, Button *rel_x, Button *rel_y, int width, int height, char *name );
 	~Button();
